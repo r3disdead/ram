@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Art Memory</title>
+    <style>body{margin:0;overflow:hidden}canvas{width:100%;height:100%}.controls{position:absolute;bottom:20px;width:100%;text-align:center;z-index:10}.control-btn{background:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.5);padding:15px;margin:0 10px;font-size:18px;cursor:pointer;border-radius:50%;display:inline-block;touch-action:none}</style>
+</head>
+<body>
+    <div class="controls"><span class="control-btn" id="mf">↑</span><span class="control-btn" id="mb">↓</span></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script>
+        const s=new THREE.Scene(),c=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,1e3),r=new THREE.WebGLRenderer();r.setSize(innerWidth,innerHeight);document.body.appendChild(r.domElement);
+        const rs=12,wh=6,wm=new THREE.MeshBasicMaterial({color:0x8B4513,side:THREE.DoubleSide}),fg=new THREE.PlaneGeometry(rs,rs);
+        const f=[new THREE.Mesh(fg,new THREE.MeshBasicMaterial({color:0x808080})),new THREE.Mesh(fg,new THREE.MeshBasicMaterial({color:0x606060}))];f[0].rotation.x=f[1].rotation.x=-Math.PI/2;f[1].position.x=rs;f.forEach(f=>s.add(f));
+        const w=[{g:[rs,wh],p:[0,wh/2,-rs/2],r:[0,0,0]},{g:[rs,wh],p:[0,wh/2,rs/2],r:[0,Math.PI,0]},{g:[rs,wh],p:[-rs/2,wh/2,0],r:[0,Math.PI/2,0]},{g:[rs/3,wh],p:[rs/2,wh/2,-rs/3],r:[0,-Math.PI/2,0]},{g:[rs/3,wh],p:[rs/2,wh/2,rs/3],r:[0,-Math.PI/2,0]},{g:[rs,wh],p:[rs,wh/2,-rs/2],r:[0,0,0]},{g:[rs,wh],p:[rs,wh/2,rs/2],r:[0,Math.PI,0]},{g:[rs,wh],p:[rs+rs/2,wh/2,0],r:[0,-Math.PI/2,0]}].map(w=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(...w.g),wm);m.position.set(...w.p);m.rotation.set(...w.r);s.add(m);return m});
+        const rf=new THREE.Mesh(new THREE.PlaneGeometry(rs*2,rs),new THREE.MeshBasicMaterial({color:0xaaaaaa,side:THREE.DoubleSide}));rf.rotation.x=Math.PI/2;rf.position.set(rs/2,wh,0);s.add(rf);
+        const l=[[3,-3],[3,3],[rs+3,-3],[rs+3,3]].map(([x,z])=>{const m=new THREE.Mesh(new THREE.CircleGeometry(.5,32),new THREE.MeshBasicMaterial({color:0xffffff}));m.position.set(x,wh-.01,z);m.rotation.x=-Math.PI/2;s.add(m);return m});
+        const i={r1:{rear:["0c605005b4c3e79cd5310a8fb93918e5e2c2bfbed8077e0a297562c5c7fcea26i0","ca0a1c1e3c5e7f7743e1aa1115b5c18604614e641613a0b5a85deb3a032c893ci0","cf33d696f3172f1bb9615bf28a9fcf8697c8f8e0bd10abd2a5b1e82e18ab0b1bi0"],front:["535413a5997d4462e2348b579d10ee229ed99753f4aa80e81f81c922b30d22f6i0"],left:["356252054f3ae335edb986973923e6d39d64bf386093eae390993f3b45cf4459i0"]},r2:{front:["547a594d81c339b9424a92c8cf7781e7960250a0d63cc73ac45445e88505ff6ei0","72e45ebbe78c7706062528a6492dfe3edc721ce0f7491419eb65044a6839efc0i0","bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0"],rear:["56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0"],right:["bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0","e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0"]}},tl=new THREE.TextureLoader(),bu="https://ordinals.com/content/";
+        const af=(u,x,y,z,r,i=0)=>tl.load(bu+u,t=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(3,3),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));m.position.set(x+i*4,y,z);m.rotation.y=r;s.add(m)});
+        i.r1.rear.forEach((u,i)=>af(u,-4,1.5,-5.9,0,i));i.r1.front.forEach(u=>af(u,0,1.5,5.9,Math.PI));i.r1.left.forEach(u=>af(u,-5.9,1.5,0,Math.PI/2));
+        i.r2.front.forEach((u,i)=>af(u,rs-4,1.5,5.9,Math.PI,i));i.r2.rear.forEach(u=>af(u,rs,1.5,-5.9,0));i.r2.right.forEach((u,i)=>af(u,rs+5.9,1.5,-2+i*4,-Math.PI/2));
+        c.position.set(0,2,0);let ts=0;addEventListener("touchstart",e=>{if(!e.target.classList.contains("control-btn"))ts=e.touches[0].clientX});addEventListener("touchmove",e=>{if(!e.target.classList.contains("control-btn")){c.rotation.y-=(e.touches[0].clientX-ts)*.005;ts=e.touches[0].clientX}});
+        const ms=.05;let m1=false,m2=false;["mf","mb"].forEach((id,i)=>{const b=document.getElementById(id);b.addEventListener("touchstart",e=>{e.preventDefault();i?m2=true:m1=true});b.addEventListener("touchend",()=>i?m2=false:m1=false)});
+        function cc(){const h=rs/2,o=4,w=.2;if(c.position.z<-h+w)c.position.z=-h+w;if(c.position.z>h-w)c.position.z=h-w;if(c.position.x<-h+w)c.position.x=-h+w;if(c.position.x>h-w&&(c.position.z<-o/2||c.position.z>o/2))c.position.x=h-w;if(c.position.x>h){if(c.position.z<-h+w)c.position.z=-h+w;if(c.position.z>h-w)c.position.z=h-w;if(c.position.x>rs+h-w)c.position.x=rs+h-w}}
+        function a(){requestAnimationFrame(a);if(m1){c.position.z-=ms*Math.cos(c.rotation.y);c.position.x-=ms*Math.sin(c.rotation.y)}if(m2){c.position.z+=ms*Math.cos(c.rotation.y);c.position.x+=ms*Math.sin(c.rotation.y)}cc();r.render(s,c)}a();
+        addEventListener("resize",()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight)});
+    </script>
+</body>
+</html>
