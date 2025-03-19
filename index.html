@@ -35,8 +35,10 @@
 </head>
 <body>
     <div class="controls">
+        <span class="control-btn" id="ml">←</span>
         <span class="control-btn" id="mf">↑</span>
         <span class="control-btn" id="mb">↓</span>
+        <span class="control-btn" id="mr">→</span>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -180,9 +182,11 @@
 
         // Contrôles de déplacement (boutons + clavier)
         const moveSpeed = 0.05;
-        let moveForward = 0, moveBackward = 0;
+        let moveForward = 0, moveBackward = 0, moveLeft = 0, moveRight = 0;
         const forwardBtn = document.getElementById("mf");
         const backwardBtn = document.getElementById("mb");
+        const leftBtn = document.getElementById("ml");
+        const rightBtn = document.getElementById("mr");
 
         // Événements pour les boutons
         forwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveForward = 1; });
@@ -193,15 +197,27 @@
         forwardBtn.addEventListener("mouseup", () => moveForward = 0);
         backwardBtn.addEventListener("mousedown", e => { e.preventDefault(); moveBackward = 1; });
         backwardBtn.addEventListener("mouseup", () => moveBackward = 0);
+        leftBtn.addEventListener("touchstart", e => { e.preventDefault(); moveLeft = 1; });
+        leftBtn.addEventListener("touchend", () => moveLeft = 0);
+        rightBtn.addEventListener("touchstart", e => { e.preventDefault(); moveRight = 1; });
+        rightBtn.addEventListener("touchend", () => moveRight = 0);
+        leftBtn.addEventListener("mousedown", e => { e.preventDefault(); moveLeft = 1; });
+        leftBtn.addEventListener("mouseup", () => moveLeft = 0);
+        rightBtn.addEventListener("mousedown", e => { e.preventDefault(); moveRight = 1; });
+        rightBtn.addEventListener("mouseup", () => moveRight = 0);
 
-        // Événements pour les touches du clavier (Ajout)
+        // Événements pour les touches du clavier
         addEventListener("keydown", e => {
             if (e.key === "ArrowUp") moveForward = 1;
             if (e.key === "ArrowDown") moveBackward = 1;
+            if (e.key === "ArrowLeft") moveLeft = 1;
+            if (e.key === "ArrowRight") moveRight = 1;
         });
         addEventListener("keyup", e => {
             if (e.key === "ArrowUp") moveForward = 0;
             if (e.key === "ArrowDown") moveBackward = 0;
+            if (e.key === "ArrowLeft") moveLeft = 0;
+            if (e.key === "ArrowRight") moveRight = 0;
         });
 
         // Limitation des mouvements de la caméra
@@ -232,6 +248,14 @@
             if (moveBackward) {
                 camera.position.z += moveSpeed * Math.cos(camera.rotation.y);
                 camera.position.x += moveSpeed * Math.sin(camera.rotation.y);
+            }
+            if (moveLeft) {
+                camera.position.z += moveSpeed * Math.sin(camera.rotation.y);
+                camera.position.x -= moveSpeed * Math.cos(camera.rotation.y);
+            }
+            if (moveRight) {
+                camera.position.z -= moveSpeed * Math.sin(camera.rotation.y);
+                camera.position.x += moveSpeed * Math.cos(camera.rotation.y);
             }
             constrainCamera();
             renderer.render(scene, camera);
