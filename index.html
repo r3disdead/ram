@@ -153,7 +153,7 @@
         // Position initiale de la caméra
         camera.position.set(0, 2, 0);
 
-        // Gestion des contrôles de la caméra
+        // Gestion des contrôles de la caméra (rotation)
         let touchX = 0, mouseX = 0, dragging = 0;
         addEventListener("touchstart", e => {
             if (!e.target.classList.contains("control-btn")) touchX = e.touches[0].clientX;
@@ -178,12 +178,13 @@
         });
         addEventListener("mouseup", () => dragging = 0);
 
-        // Contrôles de déplacement
+        // Contrôles de déplacement (boutons + clavier)
         const moveSpeed = 0.05;
         let moveForward = 0, moveBackward = 0;
         const forwardBtn = document.getElementById("mf");
         const backwardBtn = document.getElementById("mb");
 
+        // Événements pour les boutons
         forwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveForward = 1; });
         forwardBtn.addEventListener("touchend", () => moveForward = 0);
         backwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveBackward = 1; });
@@ -192,6 +193,16 @@
         forwardBtn.addEventListener("mouseup", () => moveForward = 0);
         backwardBtn.addEventListener("mousedown", e => { e.preventDefault(); moveBackward = 1; });
         backwardBtn.addEventListener("mouseup", () => moveBackward = 0);
+
+        // Événements pour les touches du clavier (Ajout)
+        addEventListener("keydown", e => {
+            if (e.key === "ArrowUp") moveForward = 1;
+            if (e.key === "ArrowDown") moveBackward = 1;
+        });
+        addEventListener("keyup", e => {
+            if (e.key === "ArrowUp") moveForward = 0;
+            if (e.key === "ArrowDown") moveBackward = 0;
+        });
 
         // Limitation des mouvements de la caméra
         function constrainCamera() {
