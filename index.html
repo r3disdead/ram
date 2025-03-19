@@ -1,1 +1,238 @@
-<!DOCTYPE html><html><head><title>Random Art Memory</title><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=no"><style>body{margin:0;overflow:hidden}canvas{width:100%;height:100%}.controls{position:absolute;bottom:20px;width:100%;text-align:center;z-index:10}.control-btn{background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.5);padding:15px;margin:0 10px;font-size:18px;cursor:pointer;border-radius:50%;display:inline-block;touch-action:none;user-select:none}</style></head><body><div class=controls><span class=control-btn id=mf>↑</span><span class=control-btn id=mb>↓</span></div><script src=https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js></script><script>const scene=new THREE.Scene,camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,1e3),renderer=new THREE.WebGLRenderer;renderer.setSize(innerWidth,innerHeight),document.body.appendChild(renderer.domElement);const rs=12,wh=6,wm=new THREE.MeshBasicMaterial({color:0x8B4513,side:2}),fg=new THREE.PlaneGeometry(rs,rs),floor=[new THREE.Mesh(fg,new THREE.MeshBasicMaterial({color:0x808080})),new THREE.Mesh(fg,new THREE.MeshBasicMaterial({color:0x606060}))];floor[0].rotation.x=floor[1].rotation.x=-Math.PI/2,floor[1].position.x=rs,floor.forEach(f=>scene.add(f));const walls=[{a:[rs,wh],b:[0,3,-6],c:[0,0,0]},{a:[rs,wh],b:[0,3,6],c:[0,Math.PI,0]},{a:[rs,wh],b:[-6,3,0],c:[0,Math.PI/2,0]},{a:[rs/3,wh],b:[6,3,-4],c:[0,-Math.PI/2,0]},{a:[rs/3,wh],b:[6,3,4],c:[0,-Math.PI/2,0]},{a:[rs,wh],b:[rs,3,-6],c:[0,0,0]},{a:[rs,wh],b:[rs,3,6],c:[0,Math.PI,0]},{a:[rs,wh],b:[18,3,0],c:[0,-Math.PI/2,0]}].map(w=>(mesh=new THREE.Mesh(new THREE.PlaneGeometry(...w.a),wm),mesh.position.set(...w.b),mesh.rotation.set(...w.c),scene.add(mesh),mesh)),roof=new THREE.Mesh(new THREE.PlaneGeometry(rs*2,rs),new THREE.MeshBasicMaterial({color:0xaaaaaa,side:2}));roof.rotation.x=Math.PI/2,roof.position.set(6,wh,0),scene.add(roof);const lights=[[3,-3],[3,3],[15,-3],[15,3]].map(([x,z])=>(mesh=new THREE.Mesh(new THREE.CircleGeometry(.5,32),new THREE.MeshBasicMaterial({color:0xffffff})),mesh.position.set(x,wh-.01,z),mesh.rotation.x=-Math.PI/2,scene.add(mesh),mesh)),inscriptions={r1:{rear:["0c605005b4c3e79cd5310a8fb93918e5e2c2bfbed8077e0a297562c5c7fcea26i0","ca0a1c1e3c5e7f7743e1aa1115b5c18604614e641613a0b5a85deb3a032c893ci0","cf33d696f3172f1bb9615bf28a9fcf8697c8f8e0bd10abd2a5b1e82e18ab0b1bi0"],front:["535413a5997d4462e2348b579d10ee229ed99753f4aa80e81f81c922b30d22f6i0"],left:["356252054f3ae335edb986973923e6d39d64bf386093eae390993f3b45cf4459i0"]},r2:{front:["547a594d81c339b9424a92c8cf7781e7960250a0d63cc73ac45445e88505ff6ei0","72e45ebbe78c7706062528a6492dfe3edc721ce0f7491419eb65044a6839efc0i0","bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0"],rear:["56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0"],right:["bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0","e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0"]}},tl=new THREE.TextureLoader,bu="https://ordinals.com/content/",addFrame=(url,x,y,z,r,i=0)=>tl.load(bu+url,t=>(mesh=new THREE.Mesh(new THREE.PlaneGeometry(3,3),new THREE.MeshBasicMaterial({map:t,side:2})),mesh.position.set(x+i*4,y,z),mesh.rotation.y=r,scene.add(mesh)));inscriptions.r1.rear.forEach((u,i)=>addFrame(u,-4,1.5,-5.9,0,i)),inscriptions.r1.front.forEach(u=>addFrame(u,0,1.5,5.9,Math.PI)),inscriptions.r1.left.forEach(u=>addFrame(u,-5.9,1.5,0,Math.PI/2)),inscriptions.r2.front.forEach((u,i)=>addFrame(u,rs-4,1.5,5.9,Math.PI,i)),inscriptions.r2.rear.forEach(u=>addFrame(u,rs,1.5,-5.9,0)),inscriptions.r2.right.forEach((u,i)=>addFrame(u,rs+5.9,1.5,-2+i*4,-Math.PI/2)),camera.position.set(0,2,0);let tx=0,mx=0,dr=0;addEventListener("touchstart",e=>e.target.classList.contains("control-btn")||(tx=e.touches[0].clientX)),addEventListener("touchmove",e=>e.target.classList.contains("control-btn")||(camera.rotation.y-=(e.touches[0].clientX-tx)*.005,tx=e.touches[0].clientX)),addEventListener("mousedown",e=>e.target.classList.contains("control-btn")||(dr=1,mx=e.clientX)),addEventListener("mousemove",e=>dr&&(camera.rotation.y-=(e.clientX-mx)*.005,mx=e.clientX)),addEventListener("mouseup",()=>dr=0);const ms=.05;let mf=0,mb=0,f=document.getElementById("mf"),b=document.getElementById("mb");f.addEventListener("touchstart",e=>(e.preventDefault(),mf=1)),f.addEventListener("touchend",()=>mf=0),b.addEventListener("touchstart",e=>(e.preventDefault(),mb=1)),b.addEventListener("touchend",()=>mb=0),f.addEventListener("mousedown",e=>(e.preventDefault(),mf=1)),f.addEventListener("mouseup",()=>mf=0),b.addEventListener("mousedown",e=>(e.preventDefault(),mb=1)),b.addEventListener("mouseup",()=>mb=0);function constrainCamera(){const h=6,o=4,w=.2;camera.position.z<-h+w&&(camera.position.z=-h+w),camera.position.z>h-w&&(camera.position.z=h-w),camera.position.x<-h+w&&(camera.position.x=-h+w),camera.position.x>h-w&&(camera.position.z<-o/2||camera.position.z>o/2)&&(camera.position.x=h-w),camera.position.x>h&&(camera.position.z<-h+w&&(camera.position.z=-h+w),camera.position.z>h-w&&(camera.position.z=h-w),camera.position.x>18-w&&(camera.position.x=18-w))}function animate(){requestAnimationFrame(animate),mf&&(camera.position.z-=ms*Math.cos(camera.rotation.y),camera.position.x-=ms*Math.sin(camera.rotation.y)),mb&&(camera.position.z+=ms*Math.cos(camera.rotation.y),camera.position.x+=ms*Math.sin(camera.rotation.y)),constrainCamera(),renderer.render(scene,camera)}animate(),addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight,camera.updateProjectionMatrix(),renderer.setSize(innerWidth,innerHeight)})</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Art Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+        .control-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            margin: 0 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: inline-block;
+            touch-action: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <span class="control-btn" id="mf">↑</span>
+        <span class="control-btn" id="mb">↓</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script>
+        // Initialisation de la scène, caméra et rendu
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(innerWidth, innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Constantes et matériaux
+        const roomSize = 12;
+        const wallHeight = 6;
+        const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513, side: THREE.DoubleSide });
+        const floorGeometry = new THREE.PlaneGeometry(roomSize, roomSize);
+
+        // Création du sol
+        const floor = [
+            new THREE.Mesh(floorGeometry, new THREE.MeshBasicMaterial({ color: 0x808080 })),
+            new THREE.Mesh(floorGeometry, new THREE.MeshBasicMaterial({ color: 0x606060 }))
+        ];
+        floor[0].rotation.x = -Math.PI / 2;
+        floor[1].rotation.x = -Math.PI / 2;
+        floor[1].position.x = roomSize;
+        floor.forEach(f => scene.add(f));
+
+        // Création des murs
+        const walls = [
+            { size: [roomSize, wallHeight], pos: [0, 3, -6], rot: [0, 0, 0] },
+            { size: [roomSize, wallHeight], pos: [0, 3, 6], rot: [0, Math.PI, 0] },
+            { size: [roomSize, wallHeight], pos: [-6, 3, 0], rot: [0, Math.PI / 2, 0] },
+            { size: [roomSize / 3, wallHeight], pos: [6, 3, -4], rot: [0, -Math.PI / 2, 0] },
+            { size: [roomSize / 3, wallHeight], pos: [6, 3, 4], rot: [0, -Math.PI / 2, 0] },
+            { size: [roomSize, wallHeight], pos: [roomSize, 3, -6], rot: [0, 0, 0] },
+            { size: [roomSize, wallHeight], pos: [roomSize, 3, 6], rot: [0, Math.PI, 0] },
+            { size: [roomSize, wallHeight], pos: [18, 3, 0], rot: [0, -Math.PI / 2, 0] }
+        ].map(w => {
+            const mesh = new THREE.Mesh(new THREE.PlaneGeometry(...w.size), wallMaterial);
+            mesh.position.set(...w.pos);
+            mesh.rotation.set(...w.rot);
+            scene.add(mesh);
+            return mesh;
+        });
+
+        // Création du toit
+        const roof = new THREE.Mesh(
+            new THREE.PlaneGeometry(roomSize * 2, roomSize),
+            new THREE.MeshBasicMaterial({ color: 0xaaaaaa, side: THREE.DoubleSide })
+        );
+        roof.rotation.x = Math.PI / 2;
+        roof.position.set(6, wallHeight, 0);
+        scene.add(roof);
+
+        // Ajout des lumières
+        const lights = [[3, -3], [3, 3], [15, -3], [15, 3]].map(([x, z]) => {
+            const mesh = new THREE.Mesh(
+                new THREE.CircleGeometry(0.5, 32),
+                new THREE.MeshBasicMaterial({ color: 0xffffff })
+            );
+            mesh.position.set(x, wallHeight - 0.01, z);
+            mesh.rotation.x = -Math.PI / 2;
+            scene.add(mesh);
+            return mesh;
+        });
+
+        // Données des inscriptions (images)
+        const inscriptions = {
+            r1: {
+                rear: [
+                    "0c605005b4c3e79cd5310a8fb93918e5e2c2bfbed8077e0a297562c5c7fcea26i0",
+                    "ca0a1c1e3c5e7f7743e1aa1115b5c18604614e641613a0b5a85deb3a032c893ci0",
+                    "cf33d696f3172f1bb9615bf28a9fcf8697c8f8e0bd10abd2a5b1e82e18ab0b1bi0"
+                ],
+                front: ["535413a5997d4462e2348b579d10ee229ed99753f4aa80e81f81c922b30d22f6i0"],
+                left: ["356252054f3ae335edb986973923e6d39d64bf386093eae390993f3b45cf4459i0"]
+            },
+            r2: {
+                front: [
+                    "547a594d81c339b9424a92c8cf7781e7960250a0d63cc73ac45445e88505ff6ei0",
+                    "72e45ebbe78c7706062528a6492dfe3edc721ce0f7491419eb65044a6839efc0i0",
+                    "bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0"
+                ],
+                rear: ["56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0"],
+                right: [
+                    "bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0",
+                    "e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0"
+                ]
+            }
+        };
+
+        // Chargement des textures et ajout des cadres
+        const textureLoader = new THREE.TextureLoader();
+        const baseUrl = "https://ordinals.com/content/";
+        const addFrame = (url, x, y, z, rotation, index = 0) => {
+            textureLoader.load(baseUrl + url, texture => {
+                const mesh = new THREE.Mesh(
+                    new THREE.PlaneGeometry(3, 3),
+                    new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
+                );
+                mesh.position.set(x + index * 4, y, z);
+                mesh.rotation.y = rotation;
+                scene.add(mesh);
+            });
+        };
+
+        inscriptions.r1.rear.forEach((url, i) => addFrame(url, -4, 1.5, -5.9, 0, i));
+        inscriptions.r1.front.forEach(url => addFrame(url, 0, 1.5, 5.9, Math.PI));
+        inscriptions.r1.left.forEach(url => addFrame(url, -5.9, 1.5, 0, Math.PI / 2));
+        inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4, 1.5, 5.9, Math.PI, i));
+        inscriptions.r2.rear.forEach(url => addFrame(url, roomSize, 1.5, -5.9, 0));
+        inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -2 + i * 4, -Math.PI / 2));
+
+        // Position initiale de la caméra
+        camera.position.set(0, 2, 0);
+
+        // Gestion des contrôles de la caméra
+        let touchX = 0, mouseX = 0, dragging = 0;
+        addEventListener("touchstart", e => {
+            if (!e.target.classList.contains("control-btn")) touchX = e.touches[0].clientX;
+        });
+        addEventListener("touchmove", e => {
+            if (!e.target.classList.contains("control-btn")) {
+                camera.rotation.y -= (e.touches[0].clientX - touchX) * 0.005;
+                touchX = e.touches[0].clientX;
+            }
+        });
+        addEventListener("mousedown", e => {
+            if (!e.target.classList.contains("control-btn")) {
+                dragging = 1;
+                mouseX = e.clientX;
+            }
+        });
+        addEventListener("mousemove", e => {
+            if (dragging) {
+                camera.rotation.y -= (e.clientX - mouseX) * 0.005;
+                mouseX = e.clientX;
+            }
+        });
+        addEventListener("mouseup", () => dragging = 0);
+
+        // Contrôles de déplacement
+        const moveSpeed = 0.05;
+        let moveForward = 0, moveBackward = 0;
+        const forwardBtn = document.getElementById("mf");
+        const backwardBtn = document.getElementById("mb");
+
+        forwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveForward = 1; });
+        forwardBtn.addEventListener("touchend", () => moveForward = 0);
+        backwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveBackward = 1; });
+        backwardBtn.addEventListener("touchend", () => moveBackward = 0);
+        forwardBtn.addEventListener("mousedown", e => { e.preventDefault(); moveForward = 1; });
+        forwardBtn.addEventListener("mouseup", () => moveForward = 0);
+        backwardBtn.addEventListener("mousedown", e => { e.preventDefault(); moveBackward = 1; });
+        backwardBtn.addEventListener("mouseup", () => moveBackward = 0);
+
+        // Limitation des mouvements de la caméra
+        function constrainCamera() {
+            const heightLimit = 6;
+            const offset = 4;
+            const wallBuffer = 0.2;
+            if (camera.position.z < -heightLimit + wallBuffer) camera.position.z = -heightLimit + wallBuffer;
+            if (camera.position.z > heightLimit - wallBuffer) camera.position.z = heightLimit - wallBuffer;
+            if (camera.position.x < -heightLimit + wallBuffer) camera.position.x = -heightLimit + wallBuffer;
+            if (camera.position.x > heightLimit - wallBuffer && (camera.position.z < -offset / 2 || camera.position.z > offset / 2)) {
+                camera.position.x = heightLimit - wallBuffer;
+            }
+            if (camera.position.x > heightLimit) {
+                if (camera.position.z < -heightLimit + wallBuffer) camera.position.z = -heightLimit + wallBuffer;
+                if (camera.position.z > heightLimit - wallBuffer) camera.position.z = heightLimit - wallBuffer;
+                if (camera.position.x > 18 - wallBuffer) camera.position.x = 18 - wallBuffer;
+            }
+        }
+
+        // Boucle d'animation
+        function animate() {
+            requestAnimationFrame(animate);
+            if (moveForward) {
+                camera.position.z -= moveSpeed * Math.cos(camera.rotation.y);
+                camera.position.x -= moveSpeed * Math.sin(camera.rotation.y);
+            }
+            if (moveBackward) {
+                camera.position.z += moveSpeed * Math.cos(camera.rotation.y);
+                camera.position.x += moveSpeed * Math.sin(camera.rotation.y);
+            }
+            constrainCamera();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Gestion du redimensionnement
+        addEventListener("resize", () => {
+            camera.aspect = innerWidth / innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+        });
+    </script>
+</body>
+</html>
