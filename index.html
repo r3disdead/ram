@@ -39,6 +39,7 @@
         <span class="control-btn" id="mf">↑</span>
         <span class="control-btn" id="mb">↓</span>
         <span class="control-btn" id="mr">→</span>
+        <span class="control-btn" id="jump">⤴</span> <!-- Bouton de saut -->
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -149,7 +150,7 @@
         };
 
         inscriptions.r1.rear.forEach((url, i) => addFrame(url, -4, 1.5, -5.9, 0, i));
-        inscriptions.r1.front.forEach((url, i) => addFrame(url, -2 + i * 4, 1.5, 5.9, Math.PI)); // Ajustement : -2 et 2
+        inscriptions.r1.front.forEach((url, i) => addFrame(url, -2 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r1.left.forEach(url => addFrame(url, -5.9, 1.5, 0, Math.PI / 2));
         inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4, 1.5, 5.9, Math.PI, i));
         inscriptions.r2.rear.forEach(url => addFrame(url, roomSize, 1.5, -5.9, 0));
@@ -183,13 +184,16 @@
         });
         addEventListener("mouseup", () => dragging = 0);
 
-        // Contrôles de déplacement (boutons + clavier)
+        // Contrôles de déplacement et saut (boutons + clavier)
         const moveSpeed = 0.05;
-        let moveForward = 0, moveBackward = 0, moveLeft = 0, moveRight = 0;
+        const jumpSpeed = 0.2; // Vitesse initiale du saut
+        const gravity = 0.01;  // Gravité pour redescendre
+        let moveForward = 0, moveBackward = 0, moveLeft = 0, moveRight = 0, isJumping = false, velocityY = 0;
         const forwardBtn = document.getElementById("mf");
         const backwardBtn = document.getElementById("mb");
         const leftBtn = document.getElementById("ml");
         const rightBtn = document.getElementById("mr");
+        const jumpBtn = document.getElementById("jump");
 
         // Événements pour les boutons
         forwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveForward = 1; });
@@ -208,6 +212,8 @@
         leftBtn.addEventListener("mouseup", () => moveLeft = 0);
         rightBtn.addEventListener("mousedown", e => { e.preventDefault(); moveRight = 1; });
         rightBtn.addEventListener("mouseup", () => moveRight = 0);
+        jumpBtn.addEventListener("touchstart", e => { e.preventDefault(); if (!isJumping) { isJumping = true; velocityY = jumpSpeed; } });
+        jumpBtn.addEventListener("mousedown", e => { e.preventDefault(); if (!isJumping) { isJumping = true; velocityY = jumpSpeed; } });
 
         // Événements pour les touches du clavier
         addEventListener("keydown", e => {
@@ -215,6 +221,7 @@
             if (e.key === "ArrowDown") moveBackward = 1;
             if (e.key === "ArrowLeft") moveLeft = 1;
             if (e.key === "ArrowRight") moveRight = 1;
+            if (e.key === " " && !isJumping) { isJumping = true; velocityY = jumpSpeed; } // Saut avec Espace
         });
         addEventListener("keyup", e => {
             if (e.key === "ArrowUp") moveForward = 0;
@@ -239,6 +246,9 @@
                 if (camera.position.z > heightLimit - wallBuffer) camera.position.z = heightLimit - wallBuffer;
                 if (camera.position.x > 18 - wallBuffer) camera.position.x = 18 - wallBuffer;
             }
+            // Gestion de la hauteur (sol et plafond)
+            if (camera.position.y < 2) { camera.position.y = 2; velocityY = 0; isJumping = false; } // Retour au sol
+            if (camera.position.y > wallHeight - 0.5) { camera.position.y = wallHeight - 0.5; velocityY = 0; } // Limite au plafond
         }
 
         // Boucle d'animation
@@ -259,6 +269,11 @@
             if (moveRight) {
                 camera.position.z -= moveSpeed * Math.sin(camera.rotation.y);
                 camera.position.x += moveSpeed * Math.cos(camera.rotation.y);
+            }
+            // Gestion du saut et de la gravité
+            if (isJumping) {
+                camera.position.y += velocityY;
+                velocityY -= gravity;
             }
             constrainCamera();
             renderer.render(scene, camera);
