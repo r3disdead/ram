@@ -129,7 +129,9 @@
                     "72e45ebbe78c7706062528a6492dfe3edc721ce0f7491419eb65044a6839efc0i0",
                     "bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0"
                 ],
-                rear: ["56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0"],
+                rear: ["56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0",
+                       "5ffc626783375d6ec740e3275710151f23e365ce6380f261d03f734affc748d5i0"
+                ],
                 right: [
                     "bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0",
                     "e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0"
@@ -156,7 +158,7 @@
         inscriptions.r1.front.forEach((url, i) => addFrame(url, -2 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r1.left.forEach((url, i) => addFrame(url, -5.9, 1.5, -2 + i * 4, Math.PI / 2)); // Centrage corrigé
         inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4, 1.5, 5.9, Math.PI, i));
-        inscriptions.r2.rear.forEach(url => addFrame(url, roomSize, 1.5, -5.9, 0));
+        inscriptions.r2.rear.forEach((url, i) => addFrame(url, roomSize - 2 + i * 4, 1.5, -5.9, 0, 0));
         inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -2 + i * 4, -Math.PI / 2));
 
         // Position initiale de la caméra
