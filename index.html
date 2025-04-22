@@ -39,25 +39,22 @@
         <span class="control-btn" id="mf">↑</span>
         <span class="control-btn" id="mb">↓</span>
         <span class="control-btn" id="mr">→</span>
-        <span class="control-btn" id="jump">⤴</span> <!-- Bouton de saut -->
+        <span class="control-btn" id="jump">⤴</span>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script>
-        // Initialisation de la scène, caméra et rendu
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(innerWidth, innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // Constantes et matériaux
         const roomSize = 12;
         const wallHeight = 6;
         const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513, side: THREE.DoubleSide });
         const floorGeometry = new THREE.PlaneGeometry(roomSize, roomSize);
 
-        // Création du sol
         const floor = [
             new THREE.Mesh(floorGeometry, new THREE.MeshBasicMaterial({ color: 0x808080 })),
             new THREE.Mesh(floorGeometry, new THREE.MeshBasicMaterial({ color: 0x606060 }))
@@ -67,7 +64,6 @@
         floor[1].position.x = roomSize;
         floor.forEach(f => scene.add(f));
 
-        // Création des murs
         const walls = [
             { size: [roomSize, wallHeight], pos: [0, 3, -6], rot: [0, 0, 0] },
             { size: [roomSize, wallHeight], pos: [0, 3, 6], rot: [0, Math.PI, 0] },
@@ -85,7 +81,6 @@
             return mesh;
         });
 
-        // Création du toit
         const roof = new THREE.Mesh(
             new THREE.PlaneGeometry(roomSize * 2, roomSize),
             new THREE.MeshBasicMaterial({ color: 0xaaaaaa, side: THREE.DoubleSide })
@@ -94,7 +89,6 @@
         roof.position.set(6, wallHeight, 0);
         scene.add(roof);
 
-        // Ajout des lumières
         const lights = [[3, -3], [3, 3], [15, -3], [15, 3]].map(([x, z]) => {
             const mesh = new THREE.Mesh(
                 new THREE.CircleGeometry(0.5, 32),
@@ -106,7 +100,6 @@
             return mesh;
         });
 
-        // Données des inscriptions (images)
         const inscriptions = {
             r1: {
                 rear: [
@@ -116,6 +109,7 @@
                 ],
                 front: [
                     "535413a5997d4462e2348b579d10ee229ed99753f4aa80e81f81c922b30d22f6i0",
+                    "4a789931962905e4984bda3f16884760e3d96482794979feded261056e607cc7i0",
                     "083703b7140339aa1315bb1aeaf23618448cadbe278f41298447c81e3c28db44i0"
                 ],
                 left: [
@@ -129,8 +123,9 @@
                     "72e45ebbe78c7706062528a6492dfe3edc721ce0f7491419eb65044a6839efc0i0",
                     "bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0"
                 ],
-                rear: ["56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0",
-                       "5ffc626783375d6ec740e3275710151f23e365ce6380f261d03f734affc748d5i0"
+                rear: [
+                    "56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0",
+                    "5ffc626783375d6ec740e3275710151f23e365ce6380f261d03f734affc748d5i0"
                 ],
                 right: [
                     "bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0",
@@ -139,7 +134,6 @@
             }
         };
 
-        // Chargement des textures et ajout des cadres
         const textureLoader = new THREE.TextureLoader();
         const baseUrl = "https://ordinals.com/content/";
         const addFrame = (url, x, y, z, rotation, index = 0) => {
@@ -155,16 +149,14 @@
         };
 
         inscriptions.r1.rear.forEach((url, i) => addFrame(url, -4, 1.5, -5.9, 0, i));
-        inscriptions.r1.front.forEach((url, i) => addFrame(url, -2 + i * 4, 1.5, 5.9, Math.PI));
-        inscriptions.r1.left.forEach((url, i) => addFrame(url, -5.9, 1.5, -2 + i * 4, Math.PI / 2)); // Centrage corrigé
+        inscriptions.r1.front.forEach((url, i) => addFrame(url, -4, 1.5, 5.9, Math.PI, i));
+        inscriptions.r1.left.forEach((url, i) => addFrame(url, -5.9, 1.5, -2 + i * 4, Math.PI / 2));
         inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4, 1.5, 5.9, Math.PI, i));
         inscriptions.r2.rear.forEach((url, i) => addFrame(url, roomSize - 2 + i * 4, 1.5, -5.9, 0, 0));
         inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -2 + i * 4, -Math.PI / 2));
 
-        // Position initiale de la caméra
         camera.position.set(0, 2, 0);
 
-        // Gestion des contrôles de la caméra (rotation)
         let touchX = 0, mouseX = 0, dragging = 0;
         addEventListener("touchstart", e => {
             if (!e.target.classList.contains("control-btn")) touchX = e.touches[0].clientX;
@@ -189,10 +181,9 @@
         });
         addEventListener("mouseup", () => dragging = 0);
 
-        // Contrôles de déplacement et saut (boutons + clavier)
         const moveSpeed = 0.05;
-        const jumpSpeed = 0.2; // Vitesse initiale du saut
-        const gravity = 0.01;  // Gravité pour redescendre
+        const jumpSpeed = 0.2;
+        const gravity = 0.01;
         let moveForward = 0, moveBackward = 0, moveLeft = 0, moveRight = 0, isJumping = false, velocityY = 0;
         const forwardBtn = document.getElementById("mf");
         const backwardBtn = document.getElementById("mb");
@@ -200,7 +191,6 @@
         const rightBtn = document.getElementById("mr");
         const jumpBtn = document.getElementById("jump");
 
-        // Événements pour les boutons
         forwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveForward = 1; });
         forwardBtn.addEventListener("touchend", () => moveForward = 0);
         backwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveBackward = 1; });
@@ -220,13 +210,12 @@
         jumpBtn.addEventListener("touchstart", e => { e.preventDefault(); if (!isJumping) { isJumping = true; velocityY = jumpSpeed; } });
         jumpBtn.addEventListener("mousedown", e => { e.preventDefault(); if (!isJumping) { isJumping = true; velocityY = jumpSpeed; } });
 
-        // Événements pour les touches du clavier
         addEventListener("keydown", e => {
             if (e.key === "ArrowUp") moveForward = 1;
             if (e.key === "ArrowDown") moveBackward = 1;
             if (e.key === "ArrowLeft") moveLeft = 1;
             if (e.key === "ArrowRight") moveRight = 1;
-            if (e.key === " " && !isJumping) { isJumping = true; velocityY = jumpSpeed; } // Saut avec Espace
+            if (e.key === " " && !isJumping) { isJumping = true; velocityY = jumpSpeed; }
         });
         addEventListener("keyup", e => {
             if (e.key === "ArrowUp") moveForward = 0;
@@ -235,7 +224,6 @@
             if (e.key === "ArrowRight") moveRight = 0;
         });
 
-        // Limitation des mouvements de la caméra
         function constrainCamera() {
             const heightLimit = 6;
             const offset = 4;
@@ -251,12 +239,10 @@
                 if (camera.position.z > heightLimit - wallBuffer) camera.position.z = heightLimit - wallBuffer;
                 if (camera.position.x > 18 - wallBuffer) camera.position.x = 18 - wallBuffer;
             }
-            // Gestion de la hauteur (sol et plafond)
-            if (camera.position.y < 2) { camera.position.y = 2; velocityY = 0; isJumping = false; } // Retour au sol
-            if (camera.position.y > wallHeight - 0.5) { camera.position.y = wallHeight - 0.5; velocityY = 0; } // Limite au plafond
+            if (camera.position.y < 2) { camera.position.y = 2; velocityY = 0; isJumping = false; }
+            if (camera.position.y > wallHeight - 0.5) { camera.position.y = wallHeight - 0.5; velocityY = 0; }
         }
 
-        // Boucle d'animation
         function animate() {
             requestAnimationFrame(animate);
             if (moveForward) {
@@ -275,7 +261,6 @@
                 camera.position.z -= moveSpeed * Math.sin(camera.rotation.y);
                 camera.position.x += moveSpeed * Math.cos(camera.rotation.y);
             }
-            // Gestion du saut et de la gravité
             if (isJumping) {
                 camera.position.y += velocityY;
                 velocityY -= gravity;
@@ -285,7 +270,6 @@
         }
         animate();
 
-        // Gestion du redimensionnement
         addEventListener("resize", () => {
             camera.aspect = innerWidth / innerHeight;
             camera.updateProjectionMatrix();
