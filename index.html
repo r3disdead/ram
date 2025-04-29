@@ -114,7 +114,8 @@
                 ],
                 left: [
                     "356252054f3ae335edb986973923e6d39d64bf386093eae390993f3b45cf4459i0",
-                    "5a5379c13f9a6d02c214e1debdf96c804c01412213d3f1b99aecfc0e14adf383i0"
+                    "5a5379c13f9a6d02c214e1debdf96c804c01412213d3f1b99aecfc0e14adf383i0",
+                    "80b9f2b3bfc69b45ea605705374dddefd207c6f9ac77c5a065af09ba69f48849i0"
                 ]
             },
             r2: {
@@ -142,17 +143,17 @@
                     new THREE.PlaneGeometry(3, 3),
                     new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
                 );
-                mesh.position.set(x + index * 4, y, z);
+                mesh.position.set(x, y, z);
                 mesh.rotation.y = rotation;
                 scene.add(mesh);
             });
         };
 
-        inscriptions.r1.rear.forEach((url, i) => addFrame(url, -4, 1.5, -5.9, 0, i));
-        inscriptions.r1.front.forEach((url, i) => addFrame(url, -4, 1.5, 5.9, Math.PI, i));
-        inscriptions.r1.left.forEach((url, i) => addFrame(url, -5.9, 1.5, -2 + i * 4, Math.PI / 2));
-        inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4, 1.5, 5.9, Math.PI, i));
-        inscriptions.r2.rear.forEach((url, i) => addFrame(url, roomSize - 2 + i * 4, 1.5, -5.9, 0, 0));
+        inscriptions.r1.rear.forEach((url, i) => addFrame(url, -4 + i * 4, 1.5, -5.9, 0));
+        inscriptions.r1.front.forEach((url, i) => addFrame(url, -4 + i * 4, 1.5, 5.9, Math.PI));
+        inscriptions.r1.left.forEach((url, i) => addFrame(url, -5.9, 1.5, -4 + i * 4, Math.PI / 2));
+        inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 1.5, 5.9, Math.PI));
+        inscriptions.r2.rear.forEach((url, i) => addFrame(url, roomSize - 2 + i * 4, 1.5, -5.9, 0));
         inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -2 + i * 4, -Math.PI / 2));
 
         camera.position.set(0, 2, 0);
@@ -271,7 +272,7 @@
         animate();
 
         addEventListener("resize", () => {
-            camera.aspect = innerWidth / innerHeight;
+            camera.aspect = innerWidth / innerHeight.
             camera.updateProjectionMatrix();
             renderer.setSize(innerWidth, innerHeight);
         });
