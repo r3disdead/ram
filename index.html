@@ -126,7 +126,8 @@
                 ],
                 rear: [
                     "56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0",
-                    "5ffc626783375d6ec740e3275710151f23e365ce6380f261d03f734affc748d5i0"
+                    "5ffc626783375d6ec740e3275710151f23e365ce6380f261d03f734affc748d5i0",
+                    "a6dbe65d150246c98013fa78d9f0a0ce056aa0e0d975727656e7ea49215ee99ai0"
                 ],
                 right: [
                     "bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0",
@@ -138,22 +139,27 @@
         const textureLoader = new THREE.TextureLoader();
         const baseUrl = "https://ordinals.com/content/";
         const addFrame = (url, x, y, z, rotation, index = 0) => {
-            textureLoader.load(baseUrl + url, texture => {
-                const mesh = new THREE.Mesh(
-                    new THREE.PlaneGeometry(3, 3),
-                    new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
-                );
-                mesh.position.set(x, y, z);
-                mesh.rotation.y = rotation;
-                scene.add(mesh);
-            });
+            textureLoader.load(
+                baseUrl + url,
+                texture => {
+                    const mesh = new THREE.Mesh(
+                        new THREE.PlaneGeometry(3, 3),
+                        new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
+                    );
+                    mesh.position.set(x, y, z);
+                    mesh.rotation.y = rotation;
+                    scene.add(mesh);
+                },
+                undefined,
+                error => console.error(`Failed to load texture: ${url}`, error)
+            );
         };
 
         inscriptions.r1.rear.forEach((url, i) => addFrame(url, -4 + i * 4, 1.5, -5.9, 0));
         inscriptions.r1.front.forEach((url, i) => addFrame(url, -4 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r1.left.forEach((url, i) => addFrame(url, -5.9, 1.5, -4 + i * 4, Math.PI / 2));
         inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 1.5, 5.9, Math.PI));
-        inscriptions.r2.rear.forEach((url, i) => addFrame(url, roomSize - 2 + i * 4, 1.5, -5.9, 0));
+        inscriptions.r2.rear.forEach((url, i) => addFrame(url, 8 + i * 4, 1.5, -5.9, 0));
         inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -2 + i * 4, -Math.PI / 2));
 
         camera.position.set(0, 2, 0);
@@ -272,7 +278,7 @@
         animate();
 
         addEventListener("resize", () => {
-            camera.aspect = innerWidth / innerHeight.
+            camera.aspect = innerWidth / innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(innerWidth, innerHeight);
         });
