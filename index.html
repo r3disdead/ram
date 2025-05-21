@@ -11,6 +11,7 @@
         canvas {
             width: 100%;
             height: 100%;
+            touch-action: none;
         }
         .controls {
             position: absolute;
@@ -44,6 +45,12 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script>
+        if (typeof THREE === "undefined") {
+            console.error("Three.js failed to load. Please check the CDN.");
+            document.body.innerHTML = "<p>Error: Unable to load Three.js. Please try again later.</p>";
+            throw new Error("Three.js not loaded");
+        }
+
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer();
@@ -131,7 +138,8 @@
                 ],
                 right: [
                     "bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0",
-                    "e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0"
+                    "e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0",
+                    "e8cc1124aa8625422f7063514cd21dc31f73912278d9dff2d37fb13e73225029i0"
                 ]
             }
         };
@@ -142,6 +150,7 @@
             textureLoader.load(
                 baseUrl + url,
                 texture => {
+                    console.log(`Loaded texture: ${url}`);
                     const mesh = new THREE.Mesh(
                         new THREE.PlaneGeometry(3, 3),
                         new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
@@ -151,7 +160,16 @@
                     scene.add(mesh);
                 },
                 undefined,
-                error => console.error(`Failed to load texture: ${url}`, error)
+                error => {
+                    console.error(`Failed to load texture: ${url}`, error);
+                    const mesh = new THREE.Mesh(
+                        new THREE.PlaneGeometry(3, 3),
+                        new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide })
+                    );
+                    mesh.position.set(x, y, z);
+                    mesh.rotation.y = rotation;
+                    scene.add(mesh);
+                }
             );
         };
 
@@ -160,7 +178,7 @@
         inscriptions.r1.left.forEach((url, i) => addFrame(url, -5.9, 1.5, -4 + i * 4, Math.PI / 2));
         inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r2.rear.forEach((url, i) => addFrame(url, 8 + i * 4, 1.5, -5.9, 0));
-        inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -2 + i * 4, -Math.PI / 2));
+        inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -4 + i * 4, -Math.PI / 2));
 
         camera.position.set(0, 2, 0);
 
@@ -170,8 +188,11 @@
         });
         addEventListener("touchmove", e => {
             if (!e.target.classList.contains("control-btn")) {
-                camera.rotation.y -= (e.touches[0].clientX - touchX) * 0.005;
-                touchX = e.touches[0].clientX;
+                let deltaX = e.touches[0].clientX - touchX;
+                if (Math.abs(deltaX) > 5) {
+                    camera.rotation.y -= deltaX * 0.005;
+                    touchX = e.touches[0].clientX;
+                }
             }
         });
         addEventListener("mousedown", e => {
