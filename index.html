@@ -68,9 +68,9 @@
         ];
         floor[0].rotation.x = -Math.PI / 2;
         floor[1].rotation.x = -Math.PI / 2;
-        floor[1].position.x = roomSize;
+        floor[0].position.x = roomSize;
         floor.forEach(f => scene.add(f));
-
+ 
         const walls = [
             { size: [roomSize, wallHeight], pos: [0, 3, -6], rot: [0, 0, 0] },
             { size: [roomSize, wallHeight], pos: [0, 3, 6], rot: [0, Math.PI, 0] },
@@ -95,17 +95,6 @@
         roof.rotation.x = Math.PI / 2;
         roof.position.set(6, wallHeight, 0);
         scene.add(roof);
-
-        const lights = [[3, -3], [3, 3], [15, -3], [15, 3]].map(([x, z]) => {
-            const mesh = new THREE.Mesh(
-                new THREE.CircleGeometry(0.5, 32),
-                new THREE.MeshBasicMaterial({ color: 0xffffff })
-            );
-            mesh.position.set(x, wallHeight - 0.01, z);
-            mesh.rotation.x = -Math.PI / 2;
-            scene.add(mesh);
-            return mesh;
-        });
 
         const inscriptions = {
             r1: {
@@ -140,6 +129,17 @@
                     "bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0",
                     "e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0",
                     "e8cc1124aa8625422f7063514cd21dc31f73912278d9dff2d37fb13e73225029i0"
+                ]
+            },
+            r3 : {
+                wleft_back: [
+                    "d4b4e3d6c84328272069d7523ab90787440076f77a69593f78c1cebcbf25b377i0"
+                ],
+                wleft_front: [
+                    "b808bdc26cbab54c7cd7f6af6f904cbde83142d31922f9607e6dbe3b478ad0eai0"
+                ],
+                wright_front: [
+                    "b774ea2c9c7fe9b723dc22134aff58ae29383447f4ee40924ccfff49ee79c246i0"
                 ]
             }
         };
@@ -179,6 +179,9 @@
         inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r2.rear.forEach((url, i) => addFrame(url, 8 + i * 4, 1.5, -5.9, 0));
         inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -4 + i * 4, -Math.PI / 2));
+        inscriptions.r3.wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, -4 + i * 2, -Math.PI / 2));
+        inscriptions.r3.wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, -4 + i * 2, Math.PI / 2));
+        inscriptions.r3.wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, 4 + i * 2, Math.PI / 2));
 
         camera.position.set(0, 2, 0);
 
