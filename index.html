@@ -41,9 +41,13 @@
         <span class="control-btn" id="mb">↓</span>
         <span class="control-btn" id="mr">→</span>
         <span class="control-btn" id="jump">⤴</span>
+        <span class="control-btn" id="playMusic" role="button" aria-label="Play Music">♪</span>
     </div>
 
-    <iframe src="https://github.com/r3disdead/ram/blob/main/menagerie-sombre.mp3" allow="autoplay" style="display:none" id="iframeAudio"></iframe>
+    <audio id="backgroundMusic" loop>
+        <source src="https://github.com/r3disdead/ram/blob/main/menagerie-sombre.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script>
@@ -187,6 +191,24 @@
 
         camera.position.set(0, 2, 0);
 
+        // Add audio control
+        const audio = document.getElementById("backgroundMusic");
+        const playMusicBtn = document.getElementById("playMusic");
+
+        playMusicBtn.addEventListener("click", () => {
+            audio.play().catch(error => {
+                console.error("Failed to play audio:", error);
+                alert("Unable to play audio. Please check if the audio file is accessible.");
+            });
+        });
+        playMusicBtn.addEventListener("touchstart", e => {
+            e.preventDefault();
+            audio.play().catch(error => {
+                console.error("Failed to play audio:", error);
+                alert("Unable to play audio. Please check if the audio file is accessible.");
+            });
+        });
+        
         let touchX = 0, mouseX = 0, dragging = 0;
         addEventListener("touchstart", e => {
             if (!e.target.classList.contains("control-btn")) touchX = e.touches[0].clientX;
