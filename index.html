@@ -141,6 +141,9 @@
                 ],
                 wright_front: [
                     "b774ea2c9c7fe9b723dc22134aff58ae29383447f4ee40924ccfff49ee79c246i0"
+                ],
+                wright_back: [
+                    "f7871878b2346a4c7821bacc9ca8491c0f1ec33f01aca5b1538af7b84bbc1836i0"
                 ]
             }
         };
@@ -183,6 +186,7 @@
         inscriptions.r3.wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, -4 + i * 2, -Math.PI / 2));
         inscriptions.r3.wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, -4 + i * 2, Math.PI / 2));
         inscriptions.r3.wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, 4 + i * 2, Math.PI / 2));
+        inscriptions.r3.wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, 4 + i * 2, -Math.PI / 2));
 
         camera.position.set(0, 2, 0);
 
