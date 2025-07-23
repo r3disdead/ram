@@ -114,7 +114,8 @@
                 left: [
                     "356252054f3ae335edb986973923e6d39d64bf386093eae390993f3b45cf4459i0",
                     "5a5379c13f9a6d02c214e1debdf96c804c01412213d3f1b99aecfc0e14adf383i0", // Kept
-                    "80b9f2b3bfc69b45ea605705374dddefd207c6f9ac77c5a065af09ba69f48849i0"
+                    "80b9f2b3bfc69b45ea605705374dddefd207c6f9ac77c5a065af09ba69f48849i0",
+                    "e0b28096d551e1e33eb5328b059e1f44800fabd2c615d6f404b9318b9b4c7c9di0"
                 ]
             },
             r2: {
@@ -214,6 +215,7 @@
         // Second layer (new inscription on r1.rear, centered)
         inscriptions.r1.rear.slice(3).forEach((url, i) => addFrame(url, 0, 5.5, -5.9, 0));
         inscriptions.r1.front.slice(3).forEach((url, i) => addFrame(url, -4, 5.5, -5.9, 0));
+        inscriptions.r1.left.slice(3).forEach((url, i) => addFrame(url, 4, 5.5, -5.9, 0));
 
         camera.position.set(0, 2, 0);
 
