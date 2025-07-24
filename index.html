@@ -315,7 +315,7 @@
 
         // Create trace
         function createTrace(position, normal) {
-            const traceGeometry = new THREE.CircleGeometry(0.3, 16);
+            const traceGeometry = new THREE.CircleGeometry(0.1, 16);
             const trace = new THREE.Mesh(traceGeometry, traceMaterial);
             trace.position.copy(position);
             trace.lookAt(position.clone().add(normal));
