@@ -42,6 +42,7 @@
         <span class="control-btn" id="mb">↓</span>
         <span class="control-btn" id="mr">→</span>
         <span class="control-btn" id="jump">⤴</span>
+        <span class="control-btn" id="rocket">🚀</span>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -219,6 +220,42 @@
 
         camera.position.set(0, 2, 0);
 
+        // --- Rocket Logic
+        const rocketGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 16);
+        const rocketMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Red rocket
+        const traceMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 }); // Black trace
+        const rockets = []; // Store active rockets
+        const rocketSpeed = 0.2; // Speed of rocket movement
+        const maxRocketDistance = 20; // Max distance before rocket is removed
+        const raycaster = new THREE.Raycaster(); // For collision detection
+
+        // Function to create and launch a rocket
+        function launchRocket() {
+            const rocket = new THREE.Mesh(rocketGeometry, rocketMaterial);
+            rocket.position.copy(camera.position);
+            rocket.rotation.copy(camera.rotation);
+            scene.add(rocket);
+
+            // Store rocket data for movement and tracking
+            rockets.push({
+                mesh: rocket,
+                direction: new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion), // Camera's forward direction
+                distanceTraveled: 0
+            });
+        }
+
+        // Function to create a trace on a wall
+        function createTrace(position, normal) {
+            const traceGeometry = new THREE.CircleGeometry(0.3, 16); // Small circular trace
+            const trace = new THREE.Mesh(traceGeometry, traceMaterial);
+            trace.position.copy(position);
+            // Align trace with wall's normal (ensure it lies flat on the wall)
+            trace.lookAt(position.clone().add(normal));
+            // Offset slightly to avoid z-fighting
+            trace.position.add(normal.multiplyScalar(0.01));
+            scene.add(trace);
+        }
+
         let touchX = 0, mouseX = 0, dragging = 0;
         addEventListener("touchstart", e => {
             if (!e.target.classList.contains("control-btn")) touchX = e.touches[0].clientX;
@@ -255,6 +292,7 @@
         const leftBtn = document.getElementById("ml");
         const rightBtn = document.getElementById("mr");
         const jumpBtn = document.getElementById("jump");
+        const rocketBtn = document.getElementById("rocket");
 
         forwardBtn.addEventListener("touchstart", e => { e.preventDefault(); moveForward = 1; });
         forwardBtn.addEventListener("touchend", () => moveForward = 0);
@@ -274,6 +312,8 @@
         rightBtn.addEventListener("mouseup", () => moveRight = 0);
         jumpBtn.addEventListener("touchstart", e => { e.preventDefault(); if (!isJumping) { isJumping = true; velocityY = jumpSpeed; } });
         jumpBtn.addEventListener("mousedown", e => { e.preventDefault(); if (!isJumping) { isJumping = true; velocityY = jumpSpeed; } });
+        rocketBtn.addEventListener("touchstart", e => { e.preventDefault(); launchRocket(); });
+        rocketBtn.addEventListener("mousedown", e => { e.preventDefault(); launchRocket(); });
 
         addEventListener("keydown", e => {
             if (e.key === "ArrowUp") moveForward = 1;
@@ -281,6 +321,7 @@
             if (e.key === "ArrowLeft") moveLeft = 1;
             if (e.key === "ArrowRight") moveRight = 1;
             if (e.key === " " && !isJumping) { isJumping = true; velocityY = jumpSpeed; }
+            if (e.key === "Enter") launchRocket(); 
         });
         addEventListener("keyup", e => {
             if (e.key === "ArrowUp") moveForward = 0;
@@ -310,6 +351,30 @@
 
         function animate() {
             requestAnimationFrame(animate);
+
+            rockets.forEach((rocket, index) => {
+                // Move rocket
+                rocket.mesh.position.addScaledVector(rocket.direction, rocketSpeed);
+                rocket.distanceTraveled += rocketSpeed;
+
+                // Check for collision with walls
+                raycaster.set(rocket.mesh.position, rocket.direction);
+                const intersects = raycaster.intersectObjects(walls);
+
+                if (intersects.length > 0 && intersects[0].distance < rocketSpeed) {
+                    // Rocket hit a wall
+                    const hitPoint = intersects[0].point;
+                    const hitNormal = intersects[0].face.normal.clone().transformDirection(intersects[0].object.matrixWorld);
+                    createTrace(hitPoint, hitNormal); // Add trace
+                    scene.remove(rocket.mesh); // Remove rocket
+                    rockets.splice(index, 1); // Remove from array
+                } else if (rocket.distanceTraveled > maxRocketDistance) {
+                    // Remove rocket if it travels too far
+                    scene.remove(rocket.mesh);
+                    rockets.splice(index, 1);
+                }
+            });
+            
             if (moveForward) {
                 camera.position.z -= moveSpeed * Math.cos(camera.rotation.y);
                 camera.position.x -= moveSpeed * Math.sin(camera.rotation.y);
