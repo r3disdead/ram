@@ -155,6 +155,8 @@
         const textureLoader = new THREE.TextureLoader();
         const baseUrl = "https://ordinals.com/content/";
         const placeholderUrl = "https://via.placeholder.com/300"; // Fallback for failed loads
+        const inscriptionsMeshes = [];
+
         const addFrame = (url, x, y, z, rotation, index = 0) => {
             textureLoader.load(
                 baseUrl + url,
@@ -167,6 +169,7 @@
                     mesh.position.set(x, y, z);
                     mesh.rotation.y = rotation;
                     scene.add(mesh);
+                    inscriptionsMeshes.push(mesh);
                 },
                 undefined,
                 error => {
@@ -184,6 +187,7 @@
                                 mesh.position.set(x, y, z);
                                 mesh.rotation.y = rotation;
                                 scene.add(mesh);
+                                inscriptionsMeshes.push(mesh);
                             },
                             undefined,
                             err => console.error(`Failed to load placeholder: ${placeholderUrl}`, err)
@@ -196,6 +200,7 @@
                         mesh.position.set(x, y, z);
                         mesh.rotation.y = rotation;
                         scene.add(mesh);
+                        inscriptionsMeshes.push(mesh);
                     }
                 }
             );
@@ -236,20 +241,19 @@
             rocket.rotation.copy(camera.rotation);
             scene.add(rocket);
 
-            // Store rocket data for movement and tracking
             rockets.push({
                 mesh: rocket,
-                direction: new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion), // Camera's forward direction
+                direction: new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion),
                 distanceTraveled: 0
             });
         }
 
-        // Function to create a trace on a wall
+        // Function to create a trace on a wall or inscription
         function createTrace(position, normal) {
             const traceGeometry = new THREE.CircleGeometry(0.3, 16); // Small circular trace
             const trace = new THREE.Mesh(traceGeometry, traceMaterial);
             trace.position.copy(position);
-            // Align trace with wall's normal (ensure it lies flat on the wall)
+            // Align trace with surface normal
             trace.lookAt(position.clone().add(normal));
             // Offset slightly to avoid z-fighting
             trace.position.add(normal.multiplyScalar(0.01));
@@ -359,7 +363,7 @@
 
                 // Check for collision with walls
                 raycaster.set(rocket.mesh.position, rocket.direction);
-                const intersects = raycaster.intersectObjects(walls);
+                const intersects = raycaster.intersectObjects([...walls, ...inscriptionsMeshes]); // Include inscriptions
 
                 if (intersects.length > 0 && intersects[0].distance < rocketSpeed) {
                     // Rocket hit a wall
@@ -374,7 +378,7 @@
                     rockets.splice(index, 1);
                 }
             });
-            
+
             if (moveForward) {
                 camera.position.z -= moveSpeed * Math.cos(camera.rotation.y);
                 camera.position.x -= moveSpeed * Math.sin(camera.rotation.y);
