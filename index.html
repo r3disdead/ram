@@ -160,7 +160,8 @@
                 right: [
                     "bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0",
                     "e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0",
-                    "e8cc1124aa8625422f7063514cd21dc31f73912278d9dff2d37fb13e73225029i0"
+                    "e8cc1124aa8625422f7063514cd21dc31f73912278d9dff2d37fb13e73225029i0",
+                     "55aef05f37ca25321f7bb1685338ada17d4e924b32aada4f907d85e97fd3580fi0"
                 ]
             },
             r3: {
@@ -244,6 +245,7 @@
 
         inscriptions.r2.front.slice(3).forEach((url, i) => addFrame(url,-4, 5.5, 5.9, Math.PI));
         inscriptions.r2.rear.slice(3).forEach((url, i) => addFrame(url, 0, 5.5, 5.9, Math.PI));
+        inscriptions.r2.right.slice(3).forEach((url, i) => addFrame(url, 4, 5.5, 5.9, Math.PI));
 
         // Set initial camera position and rotation
         camera.position.set(0, 2, 0);
