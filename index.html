@@ -141,7 +141,7 @@
                     "356252054f3ae335edb986973923e6d39d64bf386093eae390993f3b45cf4459i0",
                     "5a5379c13f9a6d02c214e1debdf96c804c01412213d3f1b99aecfc0e14adf383i0",
                     "80b9f2b3bfc69b45ea605705374dddefd207c6f9ac77c5a065af09ba69f48849i0",
-                    "e0b28096d551e1e33eb5328b059e1f44800fabd2c615d6f404b9318b9b4c7c9di0"
+                    "e0b28096d551e1e33eb5328b059e1f44800fabd2c615d6f404b9318b9b4c7c9di0",
                 ]
             },
             r2: {
@@ -176,6 +176,11 @@
                 ],
                 wright_back: [
                     "f7871878b2346a4c7821bacc9ca8491c0f1ec33f01aca5b1538af7b84bbc1836i0"
+                ]
+            },
+            r4: {
+                up_face: [
+                    "bd34487b6c5ef9e76f99db62d1ad6c5cdeb2998e43af475164a23e3fec247ecci0"
                 ]
             }
         };
@@ -246,6 +251,9 @@
         inscriptions.r2.front.slice(3).forEach((url, i) => addFrame(url,-4, 5.5, 5.9, Math.PI));
         inscriptions.r2.rear.slice(3).forEach((url, i) => addFrame(url, 0, 5.5, 5.9, Math.PI));
         inscriptions.r2.right.slice(3).forEach((url, i) => addFrame(url, 4, 5.5, 5.9, Math.PI));
+
+        inscriptions.r4.up_face.slice(0).forEach((url, i) => addFrame(url, -5.9, 5.5, -4, -Math.PI / 2));
+
 
         // Set initial camera position and rotation
         camera.position.set(0, 2, 0);
