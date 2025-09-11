@@ -180,7 +180,8 @@
             },
             r4: {
                 up_face: [
-                    "bd34487b6c5ef9e76f99db62d1ad6c5cdeb2998e43af475164a23e3fec247ecci0"
+                    "bd34487b6c5ef9e76f99db62d1ad6c5cdeb2998e43af475164a23e3fec247ecci0",
+                    "42cabaf9462f3963390ce5418a64b9ae751ddc02b460dadd7e2cdcd0a245d725i0"
                 ]
             }
         };
@@ -252,7 +253,8 @@
         inscriptions.r2.rear.slice(3).forEach((url, i) => addFrame(url, 0, 5.5, 5.9, Math.PI));
         inscriptions.r2.right.slice(3).forEach((url, i) => addFrame(url, 4, 5.5, 5.9, Math.PI));
 
-        inscriptions.r4.up_face.slice(0).forEach((url, i) => addFrame(url, -5.9, 5.5, -4, -Math.PI / 2));
+        //take all elements of r4 from 0 and place them on z axis (which should be x)
+        inscriptions.r4.up_face.slice(0).forEach((url, i) => addFrame(url, -5.9, 5.5, -4+i*4, Math.PI / 2));
 
 
         // Set initial camera position and rotation
