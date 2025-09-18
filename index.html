@@ -21,18 +21,33 @@
             width: 100%;
             text-align: center;
             z-index: 10;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
         }
         .control-btn {
             background: rgba(255, 255, 255, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 15px;
-            margin: 0 10px;
-            font-size: 18px;
+            padding: 20px;
+            margin: 5px;
+            font-size: 24px;
             cursor: pointer;
             border-radius: 50%;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
             touch-action: none;
             user-select: none;
+            transition: background 0.2s;
+        }
+        .control-btn:active {
+            background: rgba(255, 255, 255, 0.6);
+        }
+        #color-btn {
+            background: #ff0000;
         }
         #loading {
             position: absolute;
@@ -42,25 +57,58 @@
             color: white;
             font-size: 24px;
             z-index: 20;
+            text-align: center;
         }
-        /* Optional crosshair for aiming */
+        #progress-bar {
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border: 1px solid #fff;
+            margin-top: 10px;
+        }
+        #progress-fill {
+            height: 100%;
+            background: #4caf50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        #loading-error {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
         #crosshair {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             background: red;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
-            display: none; /* Uncomment to enable */
+            display: block;
+        }
+        @media (max-width: 768px) {
+            .controls {
+                bottom: 10px;
+                gap: 10px;
+            }
+            .control-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="loading">Loading...</div>
-    <div id="crosshair"></div> <!-- Optional crosshair -->
+    <div id="loading">
+        Loading... <br>
+        <div id="progress-bar"><div id="progress-fill"></div></div>
+        <div id="loading-error">Some images failed to load. Using placeholders.</div>
+    </div>
+    <div id="crosshair"></div>
     <div class="controls">
         <span class="control-btn" id="ml">←</span>
         <span class="control-btn" id="mf">↑</span>
@@ -68,6 +116,7 @@
         <span class="control-btn" id="mr">→</span>
         <span class="control-btn" id="jump">⤴</span>
         <span class="control-btn" id="rocket">🚀</span>
+        <span class="control-btn" id="color-btn">🎨</span>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -88,7 +137,6 @@
         const wallHeight = 8;
         const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513, side: THREE.DoubleSide });
         const floorGeometry = new THREE.PlaneGeometry(roomSize, roomSize);
-
         const floor = [
             new THREE.Mesh(floorGeometry, new THREE.MeshBasicMaterial({ color: 0x808080 })),
             new THREE.Mesh(floorGeometry, new THREE.MeshBasicMaterial({ color: 0x606060 }))
@@ -141,7 +189,7 @@
                     "356252054f3ae335edb986973923e6d39d64bf386093eae390993f3b45cf4459i0",
                     "5a5379c13f9a6d02c214e1debdf96c804c01412213d3f1b99aecfc0e14adf383i0",
                     "80b9f2b3bfc69b45ea605705374dddefd207c6f9ac77c5a065af09ba69f48849i0",
-                    "e0b28096d551e1e33eb5328b059e1f44800fabd2c615d6f404b9318b9b4c7c9di0",
+                    "e0b28096d551e1e33eb5328b059e1f44800fabd2c615d6f404b9318b9b4c7c9di0"
                 ]
             },
             r2: {
@@ -161,7 +209,7 @@
                     "bdaa83cf903c75d8e5e902290e0bd5e28be877620720b836388e0c3f9620d7afi0",
                     "e43b916d32afa6350a80451d0cb805583173ae86ee0ea19fe8d56b6e7722303di0",
                     "e8cc1124aa8625422f7063514cd21dc31f73912278d9dff2d37fb13e73225029i0",
-                     "55aef05f37ca25321f7bb1685338ada17d4e924b32aada4f907d85e97fd3580fi0"
+                    "55aef05f37ca25321f7bb1685338ada17d4e924b32aada4f907d85e97fd3580fi0"
                 ]
             },
             r3: {
@@ -189,16 +237,23 @@
 
         const textureLoader = new THREE.TextureLoader();
         const baseUrl = "https://ordinals.com/content/";
-        const placeholderUrl = "https://via.placeholder.com/300";
+        const fallbackUrl = "https://via.placeholder.com/300";
         const inscriptionsMeshes = [];
         let loadedTextures = 0;
+        let failedTextures = 0;
         const totalTextures = Object.values(inscriptions).reduce((sum, room) =>
-            sum + Object.values(room).reduce((s, arr) => s + arr.length, 0), 0);
+            sum + Object.values(room).reduce((s, arr) => s + arr.length, 0), 0) || 1;
 
         const addFrame = (url, x, y, z, rotation, index = 0) => {
+            const loadTimeout = setTimeout(() => {
+                console.warn(`Timeout loading texture: ${baseUrl + url}`);
+                handleTextureError();
+            }, 10000);
+
             textureLoader.load(
                 baseUrl + url,
                 texture => {
+                    clearTimeout(loadTimeout);
                     console.log(`Loaded texture: ${baseUrl + url}`);
                     const mesh = new THREE.Mesh(
                         new THREE.PlaneGeometry(3, 3),
@@ -209,38 +264,57 @@
                     scene.add(mesh);
                     inscriptionsMeshes.push(mesh);
                     loadedTextures++;
-                    if (loadedTextures >= totalTextures) {
-                        document.getElementById("loading").remove();
-                    }
+                    updateLoadingProgress();
                 },
                 undefined,
                 error => {
-                    console.error(`Failed to load texture: ${baseUrl + url}`, error);
-                    const mesh = new THREE.Mesh(
-                        new THREE.PlaneGeometry(3, 3),
-                        new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide })
-                    );
-                    mesh.position.set(x, y, z);
-                    mesh.rotation.y = rotation;
-                    scene.add(mesh);
-                    inscriptionsMeshes.push(mesh);
-                    loadedTextures++;
-                    if (loadedTextures >= totalTextures) {
-                        document.getElementById("loading").remove();
-                    }
+                    clearTimeout(loadTimeout);
+                    handleTextureError();
                 }
             );
+
+            function handleTextureError() {
+                console.error(`Failed to load texture: ${baseUrl + url}`);
+                failedTextures++;
+                textureLoader.load(
+                    fallbackUrl,
+                    texture => {
+                        const mesh = new THREE.Mesh(
+                            new THREE.PlaneGeometry(3, 3),
+                            new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide })
+                        );
+                        mesh.position.set(x, y, z);
+                        mesh.rotation.y = rotation;
+                        scene.add(mesh);
+                        inscriptionsMeshes.push(mesh);
+                        loadedTextures++;
+                        updateLoadingProgress();
+                    },
+                    undefined,
+                    error => {
+                        console.error(`Failed to load fallback texture: ${fallbackUrl}`);
+                        const mesh = new THREE.Mesh(
+                            new THREE.PlaneGeometry(3, 3),
+                            new THREE.MeshBasicMaterial({ color: 0x555555, side: THREE.DoubleSide })
+                        );
+                        mesh.position.set(x, y, z);
+                        mesh.rotation.y = rotation;
+                        scene.add(mesh);
+                        inscriptionsMeshes.push(mesh);
+                        loadedTextures++;
+                        updateLoadingProgress();
+                    }
+                );
+            }
         };
 
-        // Load inscriptions
+        // [Unchanged inscription loading]
         inscriptions.r1.rear.slice(0, 3).forEach((url, i) => addFrame(url, -4 + i * 4, 1.5, -5.9, 0));
         inscriptions.r1.front.forEach((url, i) => addFrame(url, -4 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r1.left.forEach((url, i) => addFrame(url, -5.9, 1.5, -4 + i * 4, Math.PI / 2));
-
         inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r2.rear.forEach((url, i) => addFrame(url, 8 + i * 4, 1.5, -5.9, 0));
         inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -4 + i * 4, -Math.PI / 2));
-
         inscriptions.r3.wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, -4 + i * 2, -Math.PI / 2));
         inscriptions.r3.wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, -4 + i * 2, Math.PI / 2));
         inscriptions.r3.wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, 4 + i * 2, Math.PI / 2));
@@ -257,15 +331,52 @@
         //take all elements of r4 from 0 and place them on z axis (which should be x)
         inscriptions.r4.up_face.slice(0).forEach((url, i) => addFrame(url, -5.9, 5.5, -4+i*4, Math.PI / 2));
 
+        function updateLoadingProgress() {
+            console.log(`Loaded: ${loadedTextures}/${totalTextures}, Failed: ${failedTextures}`);
+            const progress = totalTextures > 0 ? (loadedTextures / totalTextures) * 100 : 100;
+            document.getElementById("progress-fill").style.width = `${progress}%`;
+            if (failedTextures > 0) {
+                document.getElementById("loading-error").style.display = "block";
+            }
+            if (loadedTextures >= totalTextures) {
+                setTimeout(() => {
+                    document.getElementById("loading").remove();
+                }, 500);
+            }
+        }
 
-        // Set initial camera position and rotation
+        // Rocket color management
+        const rocketColors = [
+            { name: "Red", hex: 0xff0000 },
+            { name: "Blue", hex: 0x0000ff },
+            { name: "Green", hex: 0x00ff00 },
+            { name: "Yellow", hex: 0xffff00 },
+            { name: "White", hex: 0xffffff },
+            { name: "Black", hex: 0x000000 },
+            { name: "Orange", hex: 0xffa500 }
+        ];
+        let currentColorIndex = 0;
+        let rocketMaterial = new THREE.MeshBasicMaterial({ color: rocketColors[currentColorIndex].hex });
+        let traceMaterial = new THREE.MeshBasicMaterial({ color: rocketColors[currentColorIndex].hex });
+        const colorBtn = document.getElementById("color-btn");
+
+        function updateColors() {
+            currentColorIndex = (currentColorIndex + 1) % rocketColors.length;
+            rocketMaterial = new THREE.MeshBasicMaterial({ color: rocketColors[currentColorIndex].hex });
+            traceMaterial = new THREE.MeshBasicMaterial({ color: rocketColors[currentColorIndex].hex });
+            colorBtn.style.background = `#${rocketColors[currentColorIndex].hex.toString(16).padStart(6, '0')}`;
+        }
+
+        colorBtn.addEventListener("click", updateColors);
+        colorBtn.addEventListener("touchstart", e => {
+            e.preventDefault();
+            updateColors();
+        });
+
         camera.position.set(0, 2, 0);
         camera.rotation.y = Math.PI;
 
-        // Rocket logic
         const rocketGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 16);
-        const rocketMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        const traceMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
         const rockets = [];
         const rocketSpeed = 0.2;
         const maxRocketDistance = 20;
@@ -274,15 +385,27 @@
         let touchPosition = new THREE.Vector2(0, 0);
         let isTouchDevice = false;
 
-        // Detect touch device
         addEventListener("touchstart", () => isTouchDevice = true, { once: true });
 
-        // Input handling
-        let touchX = 0, mouseX = 0, dragging = 0;
+        const crosshair = document.getElementById("crosshair");
         addEventListener("mousemove", e => {
             mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
             mousePosition.y = -(e.clientY / window.innerHeight) * 2 + 1;
-            if (dragging) {
+            crosshair.style.left = `${e.clientX}px`;
+            crosshair.style.top = `${e.clientY}px`;
+        });
+        addEventListener("touchmove", e => {
+            if (!e.target.classList.contains("control-btn")) {
+                touchPosition.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+                touchPosition.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+                crosshair.style.left = `${e.touches[0].clientX}px`;
+                crosshair.style.top = `${e.touches[0].clientY}px`;
+            }
+        });
+
+        let touchX = 0, mouseX = 0, dragging = 0;
+        addEventListener("mousemove", e => {
+            if (dragging && !e.target.classList.contains("control-btn")) {
                 camera.rotation.y -= (e.clientX - mouseX) * 0.005;
                 mouseX = e.clientX;
             }
@@ -297,8 +420,6 @@
         addEventListener("touchstart", e => {
             if (!e.target.classList.contains("control-btn")) {
                 touchX = e.touches[0].clientX;
-                touchPosition.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-                touchPosition.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
             }
         });
         addEventListener("touchmove", e => {
@@ -308,19 +429,15 @@
                     camera.rotation.y -= deltaX * 0.005;
                     touchX = e.touches[0].clientX;
                 }
-                touchPosition.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-                touchPosition.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
             }
         });
 
-        // Rocket direction calculation
         function getDirectionFromScreenCoords(coords) {
             const vector = new THREE.Vector3(coords.x, coords.y, 0.5);
             vector.unproject(camera);
             return vector.sub(camera.position).normalize();
         }
 
-        // Launch rocket
         function launchRocket() {
             const rocket = new THREE.Mesh(rocketGeometry, rocketMaterial);
             rocket.position.copy(camera.position);
@@ -334,7 +451,6 @@
             });
         }
 
-        // Create trace
         function createTrace(position, normal) {
             const traceGeometry = new THREE.CircleGeometry(0.1, 16);
             const trace = new THREE.Mesh(traceGeometry, traceMaterial);
@@ -344,7 +460,6 @@
             scene.add(trace);
         }
 
-        // Movement controls
         const moveSpeed = 0.05;
         const jumpSpeed = 0.2;
         const gravity = 0.01;
@@ -384,6 +499,9 @@
             if (e.key === "ArrowRight") moveRight = 1;
             if (e.key === " " && !isJumping) { isJumping = true; velocityY = jumpSpeed; }
             if (e.key === "Enter") launchRocket();
+            if (e.key === "c" || e.key === "Shift") { // Added Shift key
+                updateColors();
+            }
         });
         addEventListener("keyup", e => {
             if (e.key === "ArrowUp") moveForward = 0;
