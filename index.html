@@ -214,13 +214,13 @@
             },
             r3: {
                 wleft_back: [
-                    "d4b4e3d6c84328272069d7523ab90787440076f77a69593f78c1cebcbf25b377i0"
+                    "d4b4e3d6c84328272069d7523ab90787440076f77a69593f78c1cebcbf25b377i0" //martyr
                 ],
                 wleft_front: [
-                    "a8613b14c642b931a1e5f4a7c89cfc354ad34a2747944aa33a2456f507ad7cadi0"
+                    "a8613b14c642b931a1e5f4a7c89cfc354ad34a2747944aa33a2456f507ad7cadi0" //abstraction
                 ],
                 wright_front: [
-                    "b774ea2c9c7fe9b723dc22134aff58ae29383447f4ee40924ccfff49ee79c246i0"
+                    "b774ea2c9c7fe9b723dc22134aff58ae29383447f4ee40924ccfff49ee79c246i0" //greg
                 ],
                 wright_back: [
                     "f7871878b2346a4c7821bacc9ca8491c0f1ec33f01aca5b1538af7b84bbc1836i0"
@@ -236,6 +236,12 @@
                     "779613bed07c74ce44a0f145a2042311d00f381dce4b552f23b6ccf33904d82bi0",
                     "e734f4aa07d00ae3a121aeb2ab332c7d4d87544ad9131483fee7f69a4f67e53ai0",
                     "03c71718a9cd1e7528caff456dedfa78c5d34b0a332b6c3ab3febee0056df761i0"
+                ],
+                up_wright_front: [
+                    "15a1f3181f99dd30e15ecde4fa0ebf7c7f906fb39d889ed7c1a9a377a116dd37i0"
+                ],
+                up_wleft_front: [
+                    "d1047e7333e4e646ebae0d4dfb9aeeb6970290947190f39d3750847963d029fei0"
                 ]
 
             }
@@ -321,10 +327,10 @@
         inscriptions.r2.front.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r2.rear.forEach((url, i) => addFrame(url, 8 + i * 4, 1.5, -5.9, 0));
         inscriptions.r2.right.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -4 + i * 4, -Math.PI / 2));
-        inscriptions.r3.wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, -4 + i * 2, -Math.PI / 2));
-        inscriptions.r3.wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, -4 + i * 2, Math.PI / 2));
-        inscriptions.r3.wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, 4 + i * 2, Math.PI / 2));
-        inscriptions.r3.wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, 4 + i * 2, -Math.PI / 2));
+        inscriptions.r3.wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, -4 + i * 2, Math.PI / 2));
+        inscriptions.r3.wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, -4 + i * 2, -Math.PI / 2));
+        inscriptions.r3.wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 1.5, 4 + i * 2, -Math.PI / 2));
+        inscriptions.r3.wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, 4 + i * 2, Math.PI / 2));
 
         inscriptions.r1.rear.slice(3).forEach((url, i) => addFrame(url, 0, 5.5, -5.9, 0));
         inscriptions.r1.front.slice(3).forEach((url, i) => addFrame(url, -4, 5.5, -5.9, 0));
@@ -338,6 +344,9 @@
         inscriptions.r4.up_face.slice(0).forEach((url, i) => addFrame(url, -5.9, 5.5, -4+i*4, Math.PI / 2));
 
         inscriptions.r4.up_back.slice(0).forEach((url, i) => addFrame(url, roomSize + 5.9, 5.5, -4 + i * 4, -Math.PI / 2));
+
+        inscriptions.r4.up_wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 5.5, -4 + i * 2, -Math.PI / 2));
+        inscriptions.r4.up_wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 5.5, 4 + i * 2, -Math.PI / 2));
 
         function updateLoadingProgress() {
             console.log(`Loaded: ${loadedTextures}/${totalTextures}, Failed: ${failedTextures}`);
