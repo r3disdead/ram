@@ -223,7 +223,7 @@
                     "b774ea2c9c7fe9b723dc22134aff58ae29383447f4ee40924ccfff49ee79c246i0" //greg
                 ],
                 wright_back: [
-                    "f7871878b2346a4c7821bacc9ca8491c0f1ec33f01aca5b1538af7b84bbc1836i0"
+                    "f7871878b2346a4c7821bacc9ca8491c0f1ec33f01aca5b1538af7b84bbc1836i0" //btc
                 ]
             },
             r4: {
@@ -242,7 +242,10 @@
                 ],
                 up_wleft_front: [
                     "d1047e7333e4e646ebae0d4dfb9aeeb6970290947190f39d3750847963d029fei0"
-                ]
+                ],
+                up_wleft_back: [
+                    "f73d630230d97723744cbb4777ed89ddae6db9adf161977d05089a0ee0a95db8i0" //thx
+                ],
 
             }
         };
@@ -347,6 +350,8 @@
 
         inscriptions.r4.up_wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 5.5, -4 + i * 2, -Math.PI / 2));
         inscriptions.r4.up_wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 5.5, 4 + i * 2, -Math.PI / 2));
+
+        inscriptions.r4.up_wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 5.5, -4 + i * 2, Math.PI / 2));
 
         function updateLoadingProgress() {
             console.log(`Loaded: ${loadedTextures}/${totalTextures}, Failed: ${failedTextures}`);
