@@ -196,7 +196,7 @@
                 front: [
                     "547a594d81c339b9424a92c8cf7781e7960250a0d63cc73ac45445e88505ff6ei0",
                     "72e45ebbe78c7706062528a6492dfe3edc721ce0f7491419eb65044a6839efc0i0",
-                    "bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0",
+                    "bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0",//poppy
                     "3c36a9977e31283b44383f5befc70e440f47215081fc92e3b1e3051a5b9c6d0bi0"
                 ],
                 rear: [
@@ -235,7 +235,7 @@
                 up_back: [
                     "779613bed07c74ce44a0f145a2042311d00f381dce4b552f23b6ccf33904d82bi0",
                     "e734f4aa07d00ae3a121aeb2ab332c7d4d87544ad9131483fee7f69a4f67e53ai0",
-                    "03c71718a9cd1e7528caff456dedfa78c5d34b0a332b6c3ab3febee0056df761i0"
+                    "03c71718a9cd1e7528caff456dedfa78c5d34b0a332b6c3ab3febee0056df761i0" //bomboklaat
                 ],
                 up_wright_front: [
                     "15a1f3181f99dd30e15ecde4fa0ebf7c7f906fb39d889ed7c1a9a377a116dd37i0"
@@ -248,7 +248,10 @@
                 ],
                 up_wright_back: [
                     "8f03f6f8ecc77979e49682d33cd8b4b2d597c79641e1115d274e7821709ad1c3i0" //omb
-                ]
+                ],
+                up_back_right: [
+                    "9872088c49f0092e323fcf34eaf77ded3e44fb2fa8dcf3d4d281ff86aaa2bef4i0" //kabuto
+                ],
             }
         };
 
@@ -355,6 +358,8 @@
 
         inscriptions.r4.up_wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 5.5, -4 + i * 2, Math.PI / 2));
         inscriptions.r4.up_wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 5.5, 4 + i * 2, Math.PI / 2));
+
+        inscriptions.r4.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 5.5, 5.9, Math.PI));
 
         function updateLoadingProgress() {
             console.log(`Loaded: ${loadedTextures}/${totalTextures}, Failed: ${failedTextures}`);
