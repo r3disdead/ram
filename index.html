@@ -202,7 +202,7 @@
                 rear: [
                     "56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0",
                     "5ffc626783375d6ec740e3275710151f23e365ce6380f261d03f734affc748d5i0",
-                    "a6dbe65d150246c98013fa78d9f0a0ce056aa0e0d975727656e7ea49215ee99ai0",
+                    "a6dbe65d150246c98013fa78d9f0a0ce056aa0e0d975727656e7ea49215ee99ai0",//pam
                     "7a61c2db0ea52adf65f32e1f6811e1321b0d1d1faef1f98d9ba2f456c28638aai0"
                 ],
                 right: [
@@ -251,8 +251,12 @@
                 ],
                 up_back_right: [
                     "9872088c49f0092e323fcf34eaf77ded3e44fb2fa8dcf3d4d281ff86aaa2bef4i0", //kabuto
-                    "4672fb96ed6058f48fbc93e66bf67127657294c21b11864ba60c7c6609c64656i0" //glov
+                    "4672fb96ed6058f48fbc93e66bf67127657294c21b11864ba60c7c6609c64656i0", //glov
+                    "256881a061046256971fa10643e396eab927c2d6471e3537d674f2a4538813cfi0" //er2
                 ],
+                /*up_back_left: [
+                    "99fcc3ee4b76e2ce63b9ee3b2ad8c491502b9f45ad85e27ab82d6923019cf9ebi0"//erase
+                ]*/
             }
         };
 
@@ -361,6 +365,7 @@
         inscriptions.r4.up_wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 5.5, 4 + i * 2, Math.PI / 2));
 
         inscriptions.r4.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 5.5, 5.9, Math.PI));
+        //inscriptions.r4.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 5.5, -5.9, 0));
 
         function updateLoadingProgress() {
             console.log(`Loaded: ${loadedTextures}/${totalTextures}, Failed: ${failedTextures}`);
