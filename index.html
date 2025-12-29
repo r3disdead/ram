@@ -252,11 +252,11 @@
                 up_back_right: [
                     "9872088c49f0092e323fcf34eaf77ded3e44fb2fa8dcf3d4d281ff86aaa2bef4i0", //kabuto
                     "4672fb96ed6058f48fbc93e66bf67127657294c21b11864ba60c7c6609c64656i0", //glov
-                    "256881a061046256971fa10643e396eab927c2d6471e3537d674f2a4538813cfi0" //er2
+                    "99fcc3ee4b76e2ce63b9ee3b2ad8c491502b9f45ad85e27ab82d6923019cf9ebi0" //erase
                 ],
-                /*up_back_left: [
-                    "99fcc3ee4b76e2ce63b9ee3b2ad8c491502b9f45ad85e27ab82d6923019cf9ebi0"//erase
-                ]*/
+                up_back_left: [
+                    "c2281b4fe911b9ef034a491c45fdff45018dc5734592d3d2e0fc30f5c87611bci0"//erase
+                ]
             }
         };
 
@@ -365,7 +365,7 @@
         inscriptions.r4.up_wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 5.5, 4 + i * 2, Math.PI / 2));
 
         inscriptions.r4.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 5.5, 5.9, Math.PI));
-        //inscriptions.r4.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 5.5, -5.9, 0));
+        inscriptions.r4.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 5.5, -5.9, 0));
 
         function updateLoadingProgress() {
             console.log(`Loaded: ${loadedTextures}/${totalTextures}, Failed: ${failedTextures}`);
