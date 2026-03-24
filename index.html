@@ -134,7 +134,7 @@
         document.body.appendChild(renderer.domElement);
 
         const roomSize = 12;
-        const wallHeight = 8;
+        const wallHeight = 12;
         const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513, side: THREE.DoubleSide });
         const floorGeometry = new THREE.PlaneGeometry(roomSize, roomSize);
         const floor = [
@@ -259,6 +259,19 @@
                     "42facf21cd9de3f547e2f0d27be6d5d5103ba8daa0cd5d2289fef7749e2a3abci0",
                     "d75e61eaa4e6d7d112366761379f18c56f3919b952a5e93a46fe444f420b954bi0"
                 ]
+            },
+            r5: {
+                up_face: [
+                    "e1532a8f66b204528c9c307ce5d224441ea9b6f9e8f4f990b493fd5dd1a14185i0", //maha
+                    "e0f299c75cf29d0bcc19a19861a32fb9601203025abb045dc0782cea7c85975fi0", //peng
+                    "2eb20fa3a0084650d3ceb6cf99e1c071325d127e9b12a470377dde4fc6de6e65i0" //walkr
+                ],
+                up_back: [
+                    "e8e558f514cb4e7c9962fde5de2b5bdf058d1d1556d9018eeeb9d0fdabffb593i0", //ape
+                    "c0049a11f648d31f4f4a7a202d61d96fc088254a7d8b285b3f9f407b1e1a2d4di0", //dick
+                    "2d95dbc0b800edac45b51b12289ff82a06c192729ff041c028f1565061ae6117i0" //baksy
+                ]
+
             }
         };
 
@@ -368,6 +381,11 @@
 
         inscriptions.r4.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 5.5, 5.9, Math.PI));
         inscriptions.r4.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 5.5, -5.9, 0));
+
+
+        inscriptions.r5.up_face.slice(0).forEach((url, i) => addFrame(url, -5.9, 9.5, -4+i*4, Math.PI / 2));
+        inscriptions.r5.up_back.slice(0).forEach((url, i) => addFrame(url, roomSize + 5.9, 9.5, -4 + i * 4, -Math.PI / 2));
+
 
         function updateLoadingProgress() {
             console.log(`Loaded: ${loadedTextures}/${totalTextures}, Failed: ${failedTextures}`);
