@@ -275,6 +275,9 @@
                     "e9e654b4bbc6458674b05d5a1b1870a7b3a26c3a0c4d099080997661d06c4d89i0", //loana
                     "cac8bea50d44ba42b68f732d68480526d6057b83635d9443b83b67123eb12ef6i0", //bit
                     "d207c78485bb2e40de91e67451c9415aa8d2e46f195cba32c486ae96e13fd4c0i0" //knot
+                ],
+                 up_back_left: [
+                    "c2a36fe9bf3ba59c1979186a7883485f951c8d50f55aff9a36d25cfb8b45f1bfi0" //can
                 ]
 
             }
@@ -391,6 +394,7 @@
         inscriptions.r5.up_face.slice(0).forEach((url, i) => addFrame(url, -5.9, 9.5, -4+i*4, Math.PI / 2));
         inscriptions.r5.up_back.slice(0).forEach((url, i) => addFrame(url, roomSize + 5.9, 9.5, -4 + i * 4, -Math.PI / 2));
         inscriptions.r5.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 9.5, 5.9, Math.PI));
+        inscriptions.r5.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 9.5, -5.9, 0));
 
 
         function updateLoadingProgress() {
