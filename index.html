@@ -191,10 +191,13 @@
                     "e0f299c75cf29d0bcc19a19861a32fb9601203025abb045dc0782cea7c85975fi0", //peng
                     "2eb20fa3a0084650d3ceb6cf99e1c071325d127e9b12a470377dde4fc6de6e65i0" //walkr
                 ],
-                 up_face_right: [
+                up_face_left: [
                     "e0677d227a45beebd997d3d1b3aab06daebd6d757e72c27b7aa7e7ef649c8bcdi0", //dualism
                     "a01921f6acc7ec68dc5c1eaa2a2e1b3142df3d62e5720b31e54070badac9dfafi0", //bruhel
                     "6d3b8ab19c7a709ba8fffdae1edfa73e32ee2c63175a63a1d3d08ec01f1c0e23i0" //xav
+                ],
+                up_face_right: [
+                    "73a2ccbfc8e54a0d30bd966ddd01db544ee80d7e11e62888c0ddc241c110bfa6i0" //banc
                 ],
                 up_back: [
                     "e8e558f514cb4e7c9962fde5de2b5bdf058d1d1556d9018eeeb9d0fdabffb593i0", //ape
@@ -283,7 +286,8 @@
 
 
         inscriptions.r5.up_face.forEach((url, i) => addFrame(url, -5.9, 9.5, -4+i*4, Math.PI / 2));
-        inscriptions.r5.up_face_right.forEach((url, i) => addFrame(url, -4 + i * 4, 9.5, -5.9, 0));
+        inscriptions.r5.up_face_left.forEach((url, i) => addFrame(url, -4 + i * 4, 9.5, -5.9, 0));
+        inscriptions.r5.up_face_right.forEach((url, i) => addFrame(url, - 4 + i * 4, 9.5, 5.9, Math.PI));
 
         inscriptions.r5.up_back.forEach((url, i) => addFrame(url, roomSize + 5.9, 9.5, -4 + i * 4, -Math.PI / 2));
         inscriptions.r5.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 9.5, 5.9, Math.PI));
