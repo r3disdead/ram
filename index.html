@@ -218,7 +218,10 @@
                 ],
                  up_wright_front: [
                     "2ef47a7e2aed79a4f6e95d5651d336f01bbd3e7ab3fb86d5e9e2e05ce319822bi0"
-                ]
+                ],
+                 up_wleft_front: [
+                    "24ef11ba205024103f132e75bc90ed03cd3d4da83668cefb54bac9f59d015d1ci0"
+                ],
 
             }
         };
@@ -299,7 +302,7 @@
         inscriptions.r5.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 9.5, -5.9, 0));
 
         inscriptions.r5.up_wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 9.5, 4 + i * 2, -Math.PI / 2));
-
+        inscriptions.r5.up_wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 9.5, -4 + i * 2, -Math.PI / 2));
 
         // Caméra
         camera.position.set(0, 2, 0);
