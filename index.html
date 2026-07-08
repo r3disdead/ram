@@ -59,7 +59,7 @@
         document.body.appendChild(renderer.domElement);
 
         const roomSize = 12;
-        const wallHeight = 12;
+        const wallHeight = 16;
         const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513, side: THREE.DoubleSide });
 
         // Floor
@@ -229,6 +229,11 @@
                     "abbada266fb8163ce0e0c11a3fb04c5576292959885e0ffcbc313c74530f6052i0"
                 ]
 
+            },
+            r6: {
+                up_face: [
+                    "e0863c82e8f3876044b1e4f7cfee4a74acffcb16058bdefca420ff37b2318e8fi0", //57
+                ]
             }
         };
 
@@ -312,6 +317,9 @@
         inscriptions.r5.up_wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 9.5, -4 + i * 2, -Math.PI / 2));
         inscriptions.r5.up_wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 9.5, -4 + i * 2, Math.PI / 2));
         inscriptions.r5.up_wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 9.5, 4 + i * 2, Math.PI / 2));
+
+        //4rd raw
+        inscriptions.r6.up_face.forEach((url, i) => addFrame(url, -5.9, 13.5, -4+i*4, Math.PI / 2));
 
         // Caméra
         camera.position.set(0, 2, 0);
