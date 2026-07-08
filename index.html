@@ -211,17 +211,23 @@
                     "cac8bea50d44ba42b68f732d68480526d6057b83635d9443b83b67123eb12ef6i0", //bit
                     "d207c78485bb2e40de91e67451c9415aa8d2e46f195cba32c486ae96e13fd4c0i0" //knot
                 ],
-                 up_back_left: [
+                up_back_left: [
                     "c2a36fe9bf3ba59c1979186a7883485f951c8d50f55aff9a36d25cfb8b45f1bfi0", //can
                      "be66fb731b8fdb02f181f99cc392c6a897dda727e5e446a697bc909ccd113e3ai0", //weird
                      "ec8ff9ddab06f368d4340aa1718f1f239559ad4160402305ca0bc8e9a3e7957fi0"
                 ],
-                 up_wright_front: [
+                up_wright_front: [
                     "2ef47a7e2aed79a4f6e95d5651d336f01bbd3e7ab3fb86d5e9e2e05ce319822bi0"
                 ],
-                 up_wleft_front: [
+                up_wleft_front: [
                     "24ef11ba205024103f132e75bc90ed03cd3d4da83668cefb54bac9f59d015d1ci0"
                 ],
+                up_wright_back: [
+                    "288e96c93d48c3e9e0be2041dca62ebf07ee47f72b0236a9c5e5dda792c89f6di0"
+                ],
+                up_wleft_back: [
+                    "abbada266fb8163ce0e0c11a3fb04c5576292959885e0ffcbc313c74530f6052i0"
+                ]
 
             }
         };
@@ -292,6 +298,7 @@
         inscriptions.r4.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 5.5, 5.9, Math.PI));
         inscriptions.r4.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 5.5, -5.9, 0));
 
+        //3rd row
 
         inscriptions.r5.up_face.forEach((url, i) => addFrame(url, -5.9, 9.5, -4+i*4, Math.PI / 2));
         inscriptions.r5.up_face_left.forEach((url, i) => addFrame(url, -4 + i * 4, 9.5, -5.9, 0));
@@ -303,6 +310,8 @@
 
         inscriptions.r5.up_wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 9.5, 4 + i * 2, -Math.PI / 2));
         inscriptions.r5.up_wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 9.5, -4 + i * 2, -Math.PI / 2));
+        inscriptions.r5.up_wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 9.5, -4 + i * 2, Math.PI / 2));
+        inscriptions.r5.up_wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 9.5, 4 + i * 2, Math.PI / 2));
 
         // Caméra
         camera.position.set(0, 2, 0);
