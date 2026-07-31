@@ -235,6 +235,9 @@
                     "e0863c82e8f3876044b1e4f7cfee4a74acffcb16058bdefca420ff37b2318e8fi0", //57
                     "8d95fd5b01deeab3c68968cefad16cff7137034fa685f4fe746ea16029b29866i0", //messi
                     "25dad0d88f09625f80ce9131cf50fbe638f024be4ad4a0aa524fedd80d58b9bfi0" //mantis
+                ],
+                 up_face_left: [
+                    "c4b0e1fb1c810d0397d1c15ac2d6386474fceff908bd1e80daa82fff6ceaadfai0" //nightcall
                 ]
             }
         };
@@ -322,6 +325,7 @@
 
         //4rd raw
         inscriptions.r6.up_face.forEach((url, i) => addFrame(url, -5.9, 13.5, -4+i*4, Math.PI / 2));
+        inscriptions.r5.up_face_left.forEach((url, i) => addFrame(url, -4 + i * 4, 13.5, -5.9, 0));
 
         // Caméra
         camera.position.set(0, 2, 0);
