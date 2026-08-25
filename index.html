@@ -2,31 +2,36 @@
 <html>
 <head>
     <title>Random Art Memory</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1">
     <link rel="icon" href="data:,">
     <style>
-        body { margin: 0; overflow: hidden; background: #000; }
-        canvas { width: 100%; height: 100%; touch-action: none; }
+        body { margin: 0; overflow: hidden; background: #000; touch-action: none; }
+        canvas { width: 100%; height: 100%; touch-action: none; display: block; }
         .controls {
             position: absolute; bottom: 20px; width: 100%; text-align: center; z-index: 10;
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+            pointer-events: none;
         }
         .control-btn {
-            background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5);
-            padding: 20px; font-size: 24px; cursor: pointer; border-radius: 50%;
-            width: 60px; height: 60px; display: inline-flex; align-items: center; justify-content: center;
-            touch-action: none; user-select: none;
+            background: rgba(255,255,255,0.35); border: 1px solid rgba(255,255,255,0.6);
+            padding: 0; font-size: 22px; cursor: pointer; border-radius: 50%;
+            width: 58px; height: 58px; display: inline-flex; align-items: center; justify-content: center;
+            touch-action: none; user-select: none; -webkit-user-select: none;
+            pointer-events: auto;
+            color: white;
+            font-weight: bold;
         }
-        .control-btn:active { background: rgba(255,255,255,0.6); }
+        .control-btn:active { background: rgba(255,255,255,0.65); }
         #color-btn { background: #ff0000; }
         #loading {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: white; font-size: 24px; z-index: 20; text-align: center;
+            color: white; font-size: 22px; z-index: 20; text-align: center;
         }
-        #progress-bar { width: 200px; height: 20px; background: #333; border: 1px solid #fff; margin-top: 10px; }
+        #progress-bar { width: 200px; height: 18px; background: #333; border: 1px solid #fff; margin: 12px auto 0; }
         #progress-fill { height: 100%; background: #4caf50; width: 0%; transition: width 0.3s; }
+        #loading-error { display: none; margin-top: 8px; font-size: 14px; color: #ffaaaa; }
         #crosshair {
-            position: absolute; top: 50%; left: 50%; width: 12px; height: 12px;
+            position: absolute; top: 50%; left: 50%; width: 10px; height: 10px;
             background: red; border-radius: 50%; transform: translate(-50%, -50%);
             z-index: 10; pointer-events: none;
         }
@@ -54,8 +59,9 @@
     <script>
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
         const roomSize = 12;
@@ -96,7 +102,7 @@
         roof.position.set(6, wallHeight, 0);
         scene.add(roof);
 
-                const inscriptions = {
+        const inscriptions = {
             r1: {
                 up_face: [
                     "0c605005b4c3e79cd5310a8fb93918e5e2c2bfbed8077e0a297562c5c7fcea26i0",
@@ -116,31 +122,22 @@
                 up_back: [
                     "547a594d81c339b9424a92c8cf7781e7960250a0d63cc73ac45445e88505ff6ei0",
                     "72e45ebbe78c7706062528a6492dfe3edc721ce0f7491419eb65044a6839efc0i0",
-                    "bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0"//poppy
+                    "bbb59aad913ff20412a4730aa6a81601399e20bb266ecfe9365243d6b3b6c2bci0"
                 ],
                 up_back_right: [
                     "4ad74184e62077ef9c89e622ec495ba2f50e86f33709666b5f8eb6ca5b86e5a3i0",
-                    "b808bdc26cbab54c7cd7f6af6f904cbde83142d31922f9607e6dbe3b478ad0eai0",       
+                    "b808bdc26cbab54c7cd7f6af6f904cbde83142d31922f9607e6dbe3b478ad0eai0",
                     "e0b28096d551e1e33eb5328b059e1f44800fabd2c615d6f404b9318b9b4c7c9di0"
                 ],
                 up_back_left: [
-                    "3c36a9977e31283b44383f5befc70e440f47215081fc92e3b1e3051a5b9c6d0bi0", 
+                    "3c36a9977e31283b44383f5befc70e440f47215081fc92e3b1e3051a5b9c6d0bi0",
                     "7a61c2db0ea52adf65f32e1f6811e1321b0d1d1faef1f98d9ba2f456c28638aai0",
                     "55aef05f37ca25321f7bb1685338ada17d4e924b32aada4f907d85e97fd3580fi0"
                 ],
-                up_wright_front: [
-                     "b774ea2c9c7fe9b723dc22134aff58ae29383447f4ee40924ccfff49ee79c246i0" //greg
-                ],
-                up_wleft_front: [
-                     "a8613b14c642b931a1e5f4a7c89cfc354ad34a2747944aa33a2456f507ad7cadi0" //abstraction
-                ],
-                up_wright_back: [
-                    "f7871878b2346a4c7821bacc9ca8491c0f1ec33f01aca5b1538af7b84bbc1836i0" //btc
-                ],
-                up_wleft_back: [
-                    "d4b4e3d6c84328272069d7523ab90787440076f77a69593f78c1cebcbf25b377i0" //martyr
-                ]
-
+                up_wright_front: ["b774ea2c9c7fe9b723dc22134aff58ae29383447f4ee40924ccfff49ee79c246i0"],
+                up_wleft_front: ["a8613b14c642b931a1e5f4a7c89cfc354ad34a2747944aa33a2456f507ad7cadi0"],
+                up_wright_back: ["f7871878b2346a4c7821bacc9ca8491c0f1ec33f01aca5b1538af7b84bbc1836i0"],
+                up_wleft_back: ["d4b4e3d6c84328272069d7523ab90787440076f77a69593f78c1cebcbf25b377i0"]
             },
             r2: {
                 up_face: [
@@ -154,94 +151,76 @@
                     "e8cc1124aa8625422f7063514cd21dc31f73912278d9dff2d37fb13e73225029i0"
                 ],
                 up_face_right: [
-                     "56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0",
+                    "56a2bc9b36dfbf20a1ae7903879feb450ec29cb26ed105f5daf44f470bcbf07ci0",
                     "5ffc626783375d6ec740e3275710151f23e365ce6380f261d03f734affc748d5i0",
-                    "a6dbe65d150246c98013fa78d9f0a0ce056aa0e0d975727656e7ea49215ee99ai0"//pam
+                    "a6dbe65d150246c98013fa78d9f0a0ce056aa0e0d975727656e7ea49215ee99ai0"
                 ],
                 up_back: [
                     "779613bed07c74ce44a0f145a2042311d00f381dce4b552f23b6ccf33904d82bi0",
                     "e734f4aa07d00ae3a121aeb2ab332c7d4d87544ad9131483fee7f69a4f67e53ai0",
-                    "03c71718a9cd1e7528caff456dedfa78c5d34b0a332b6c3ab3febee0056df761i0" //bomboklaat
+                    "03c71718a9cd1e7528caff456dedfa78c5d34b0a332b6c3ab3febee0056df761i0"
                 ],
                 up_back_right: [
-                    "9872088c49f0092e323fcf34eaf77ded3e44fb2fa8dcf3d4d281ff86aaa2bef4i0", //kabuto
-                    "4672fb96ed6058f48fbc93e66bf67127657294c21b11864ba60c7c6609c64656i0", //glov
-                    "99fcc3ee4b76e2ce63b9ee3b2ad8c491502b9f45ad85e27ab82d6923019cf9ebi0" //erase
+                    "9872088c49f0092e323fcf34eaf77ded3e44fb2fa8dcf3d4d281ff86aaa2bef4i0",
+                    "4672fb96ed6058f48fbc93e66bf67127657294c21b11864ba60c7c6609c64656i0",
+                    "99fcc3ee4b76e2ce63b9ee3b2ad8c491502b9f45ad85e27ab82d6923019cf9ebi0"
                 ],
                 up_back_left: [
-                    "c2281b4fe911b9ef034a491c45fdff45018dc5734592d3d2e0fc30f5c87611bci0",//bb
+                    "c2281b4fe911b9ef034a491c45fdff45018dc5734592d3d2e0fc30f5c87611bci0",
                     "42facf21cd9de3f547e2f0d27be6d5d5103ba8daa0cd5d2289fef7749e2a3abci0",
                     "d75e61eaa4e6d7d112366761379f18c56f3919b952a5e93a46fe444f420b954bi0"
                 ],
-                up_wright_front: [
-                    "15a1f3181f99dd30e15ecde4fa0ebf7c7f906fb39d889ed7c1a9a377a116dd37i0"
-                ],
-                up_wleft_front: [
-                     "d1047e7333e4e646ebae0d4dfb9aeeb6970290947190f39d3750847963d029fei0"
-                ],
-                up_wright_back: [
-                    "8f03f6f8ecc77979e49682d33cd8b4b2d597c79641e1115d274e7821709ad1c3i0" //omb
-                ],
-                up_wleft_back: [
-                    "f73d630230d97723744cbb4777ed89ddae6db9adf161977d05089a0ee0a95db8i0" //thx
-                ]
-
+                up_wright_front: ["15a1f3181f99dd30e15ecde4fa0ebf7c7f906fb39d889ed7c1a9a377a116dd37i0"],
+                up_wleft_front: ["d1047e7333e4e646ebae0d4dfb9aeeb6970290947190f39d3750847963d029fei0"],
+                up_wright_back: ["8f03f6f8ecc77979e49682d33cd8b4b2d597c79641e1115d274e7821709ad1c3i0"],
+                up_wleft_back: ["f73d630230d97723744cbb4777ed89ddae6db9adf161977d05089a0ee0a95db8i0"]
             },
             r3: {
                 up_face: [
-                    "e1532a8f66b204528c9c307ce5d224441ea9b6f9e8f4f990b493fd5dd1a14185i0", //maha
-                    "e0f299c75cf29d0bcc19a19861a32fb9601203025abb045dc0782cea7c85975fi0", //peng
-                    "2eb20fa3a0084650d3ceb6cf99e1c071325d127e9b12a470377dde4fc6de6e65i0" //walkr
+                    "e1532a8f66b204528c9c307ce5d224441ea9b6f9e8f4f990b493fd5dd1a14185i0",
+                    "e0f299c75cf29d0bcc19a19861a32fb9601203025abb045dc0782cea7c85975fi0",
+                    "2eb20fa3a0084650d3ceb6cf99e1c071325d127e9b12a470377dde4fc6de6e65i0"
                 ],
                 up_face_left: [
-                    "e0677d227a45beebd997d3d1b3aab06daebd6d757e72c27b7aa7e7ef649c8bcdi0", //dualism
-                    "a01921f6acc7ec68dc5c1eaa2a2e1b3142df3d62e5720b31e54070badac9dfafi0", //bruhel
-                    "6d3b8ab19c7a709ba8fffdae1edfa73e32ee2c63175a63a1d3d08ec01f1c0e23i0" //xav
+                    "e0677d227a45beebd997d3d1b3aab06daebd6d757e72c27b7aa7e7ef649c8bcdi0",
+                    "a01921f6acc7ec68dc5c1eaa2a2e1b3142df3d62e5720b31e54070badac9dfafi0",
+                    "6d3b8ab19c7a709ba8fffdae1edfa73e32ee2c63175a63a1d3d08ec01f1c0e23i0"
                 ],
                 up_face_right: [
-                    "73a2ccbfc8e54a0d30bd966ddd01db544ee80d7e11e62888c0ddc241c110bfa6i0", //banc
-                    "0e9c2fbdaea34b09ba8bcd19acc5a317a7b8b7b9d74154bba60556447839e431i0", //sophie
-                    "c5259defc149749027ad37ac5724b78f5fbce35e5bb608ec79514ee8300b9f37i0" //tatoo
+                    "73a2ccbfc8e54a0d30bd966ddd01db544ee80d7e11e62888c0ddc241c110bfa6i0",
+                    "0e9c2fbdaea34b09ba8bcd19acc5a317a7b8b7b9d74154bba60556447839e431i0",
+                    "c5259defc149749027ad37ac5724b78f5fbce35e5bb608ec79514ee8300b9f37i0"
                 ],
                 up_back: [
-                    "e8e558f514cb4e7c9962fde5de2b5bdf058d1d1556d9018eeeb9d0fdabffb593i0", //ape
-                    "c0049a11f648d31f4f4a7a202d61d96fc088254a7d8b285b3f9f407b1e1a2d4di0", //dick
-                    "2d95dbc0b800edac45b51b12289ff82a06c192729ff041c028f1565061ae6117i0" //baksy
+                    "e8e558f514cb4e7c9962fde5de2b5bdf058d1d1556d9018eeeb9d0fdabffb593i0",
+                    "c0049a11f648d31f4f4a7a202d61d96fc088254a7d8b285b3f9f407b1e1a2d4di0",
+                    "2d95dbc0b800edac45b51b12289ff82a06c192729ff041c028f1565061ae6117i0"
                 ],
                 up_back_right: [
-                    "e9e654b4bbc6458674b05d5a1b1870a7b3a26c3a0c4d099080997661d06c4d89i0", //loana
-                    "cac8bea50d44ba42b68f732d68480526d6057b83635d9443b83b67123eb12ef6i0", //bit
-                    "d207c78485bb2e40de91e67451c9415aa8d2e46f195cba32c486ae96e13fd4c0i0" //knot
+                    "e9e654b4bbc6458674b05d5a1b1870a7b3a26c3a0c4d099080997661d06c4d89i0",
+                    "cac8bea50d44ba42b68f732d68480526d6057b83635d9443b83b67123eb12ef6i0",
+                    "d207c78485bb2e40de91e67451c9415aa8d2e46f195cba32c486ae96e13fd4c0i0"
                 ],
                 up_back_left: [
-                    "c2a36fe9bf3ba59c1979186a7883485f951c8d50f55aff9a36d25cfb8b45f1bfi0", //can
-                     "be66fb731b8fdb02f181f99cc392c6a897dda727e5e446a697bc909ccd113e3ai0", //weird
-                     "ec8ff9ddab06f368d4340aa1718f1f239559ad4160402305ca0bc8e9a3e7957fi0"
+                    "c2a36fe9bf3ba59c1979186a7883485f951c8d50f55aff9a36d25cfb8b45f1bfi0",
+                    "be66fb731b8fdb02f181f99cc392c6a897dda727e5e446a697bc909ccd113e3ai0",
+                    "ec8ff9ddab06f368d4340aa1718f1f239559ad4160402305ca0bc8e9a3e7957fi0"
                 ],
-                up_wright_front: [
-                    "2ef47a7e2aed79a4f6e95d5651d336f01bbd3e7ab3fb86d5e9e2e05ce319822bi0"
-                ],
-                up_wleft_front: [
-                    "24ef11ba205024103f132e75bc90ed03cd3d4da83668cefb54bac9f59d015d1ci0"
-                ],
-                up_wright_back: [
-                    "288e96c93d48c3e9e0be2041dca62ebf07ee47f72b0236a9c5e5dda792c89f6di0"
-                ],
-                up_wleft_back: [
-                    "abbada266fb8163ce0e0c11a3fb04c5576292959885e0ffcbc313c74530f6052i0"
-                ]
-
+                up_wright_front: ["2ef47a7e2aed79a4f6e95d5651d336f01bbd3e7ab3fb86d5e9e2e05ce319822bi0"],
+                up_wleft_front: ["24ef11ba205024103f132e75bc90ed03cd3d4da83668cefb54bac9f59d015d1ci0"],
+                up_wright_back: ["288e96c93d48c3e9e0be2041dca62ebf07ee47f72b0236a9c5e5dda792c89f6di0"],
+                up_wleft_back: ["abbada266fb8163ce0e0c11a3fb04c5576292959885e0ffcbc313c74530f6052i0"]
             },
             r4: {
                 up_face: [
-                    "e0863c82e8f3876044b1e4f7cfee4a74acffcb16058bdefca420ff37b2318e8fi0", //57
-                    "8d95fd5b01deeab3c68968cefad16cff7137034fa685f4fe746ea16029b29866i0", //messi
-                    "25dad0d88f09625f80ce9131cf50fbe638f024be4ad4a0aa524fedd80d58b9bfi0" //mantis
+                    "e0863c82e8f3876044b1e4f7cfee4a74acffcb16058bdefca420ff37b2318e8fi0",
+                    "8d95fd5b01deeab3c68968cefad16cff7137034fa685f4fe746ea16029b29866i0",
+                    "25dad0d88f09625f80ce9131cf50fbe638f024be4ad4a0aa524fedd80d58b9bfi0"
                 ],
-                 up_face_left: [
-                    "c4b0e1fb1c810d0397d1c15ac2d6386474fceff908bd1e80daa82fff6ceaadfai0", //nightcall
-                     "e231fedf1a5fa48650e6bfb859397d1f1a37410ff86b01bb552c5a323a0c503bi0", //eclipse
-                     "66b11ca594e7dfceb0385c1b02f434299815d4f1d3977e64b6e565ebdc62ff09i0" //souvenirs
+                up_face_left: [
+                    "c4b0e1fb1c810d0397d1c15ac2d6386474fceff908bd1e80daa82fff6ceaadfai0",
+                    "e231fedf1a5fa48650e6bfb859397d1f1a37410ff86b01bb552c5a323a0c503bi0",
+                    "66b11ca594e7dfceb0385c1b02f434299815d4f1d3977e64b6e565ebdc62ff09i0"
                 ]
             }
         };
@@ -279,11 +258,10 @@
             if (loadedTextures >= totalTextures) setTimeout(() => document.getElementById("loading").remove(), 500);
         }
 
-        //1rd row
-
+        // Placement des tableaux
         inscriptions.r1.up_face.forEach((url, i) => addFrame(url, -5.9, 1.5, -4+i*4, Math.PI / 2));
         inscriptions.r1.up_face_left.forEach((url, i) => addFrame(url, -4 + i * 4, 1.5, -5.9, 0));
-        inscriptions.r1.up_face_right.forEach((url, i) => addFrame(url, - 4 + i * 4, 1.5, 5.9, Math.PI));
+        inscriptions.r1.up_face_right.forEach((url, i) => addFrame(url, -4 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r1.up_back.forEach((url, i) => addFrame(url, roomSize + 5.9, 1.5, -4 + i * 4, -Math.PI / 2));
         inscriptions.r1.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 1.5, 5.9, Math.PI));
         inscriptions.r1.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 1.5, -5.9, 0));
@@ -292,11 +270,9 @@
         inscriptions.r1.up_wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, -4 + i * 2, Math.PI / 2));
         inscriptions.r1.up_wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 1.5, 4 + i * 2, Math.PI / 2));
 
-        //2rd row
-
         inscriptions.r2.up_face.forEach((url, i) => addFrame(url, -5.9, 5.5, -4+i*4, Math.PI / 2));
         inscriptions.r2.up_face_left.forEach((url, i) => addFrame(url, -4 + i * 4, 5.5, -5.9, 0));
-        inscriptions.r2.up_face_right.forEach((url, i) => addFrame(url, - 4 + i * 4, 5.5, 5.9, Math.PI));
+        inscriptions.r2.up_face_right.forEach((url, i) => addFrame(url, -4 + i * 4, 5.5, 5.9, Math.PI));
         inscriptions.r2.up_back.forEach((url, i) => addFrame(url, roomSize + 5.9, 5.5, -4 + i * 4, -Math.PI / 2));
         inscriptions.r2.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 5.5, 5.9, Math.PI));
         inscriptions.r2.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 5.5, -5.9, 0));
@@ -305,49 +281,81 @@
         inscriptions.r2.up_wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 5.5, -4 + i * 2, Math.PI / 2));
         inscriptions.r2.up_wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 5.5, 4 + i * 2, Math.PI / 2));
 
-        //3rd row
-
         inscriptions.r3.up_face.forEach((url, i) => addFrame(url, -5.9, 9.5, -4+i*4, Math.PI / 2));
         inscriptions.r3.up_face_left.forEach((url, i) => addFrame(url, -4 + i * 4, 9.5, -5.9, 0));
-        inscriptions.r3.up_face_right.forEach((url, i) => addFrame(url, - 4 + i * 4, 9.5, 5.9, Math.PI));
-
+        inscriptions.r3.up_face_right.forEach((url, i) => addFrame(url, -4 + i * 4, 9.5, 5.9, Math.PI));
         inscriptions.r3.up_back.forEach((url, i) => addFrame(url, roomSize + 5.9, 9.5, -4 + i * 4, -Math.PI / 2));
         inscriptions.r3.up_back_right.forEach((url, i) => addFrame(url, roomSize - 4 + i * 4, 9.5, 5.9, Math.PI));
         inscriptions.r3.up_back_left.forEach((url, i) => addFrame(url, 8 + i * 4, 9.5, -5.9, 0));
-
         inscriptions.r3.up_wright_front.forEach((url, i) => addFrame(url, 6 - 0.01, 9.5, 4 + i * 2, -Math.PI / 2));
         inscriptions.r3.up_wleft_front.forEach((url, i) => addFrame(url, 6 - 0.01, 9.5, -4 + i * 2, -Math.PI / 2));
         inscriptions.r3.up_wleft_back.forEach((url, i) => addFrame(url, 6 + 0.01, 9.5, -4 + i * 2, Math.PI / 2));
         inscriptions.r3.up_wright_back.forEach((url, i) => addFrame(url, 6 + 0.01, 9.5, 4 + i * 2, Math.PI / 2));
 
-        //4rd raw
         inscriptions.r4.up_face.forEach((url, i) => addFrame(url, -5.9, 13.5, -4+i*4, Math.PI / 2));
         inscriptions.r4.up_face_left.forEach((url, i) => addFrame(url, -4 + i * 4, 13.5, -5.9, 0));
 
-        // Caméra
+        // ========== CAMÉRA & CONTROLES ==========
         camera.position.set(0, 2, 0);
         let yaw = Math.PI;
         let pitch = 0;
-        const sensitivity = 0.0025;
+        const sensitivityMouse = 0.0025;
+        const sensitivityTouch = 0.0045;
 
         function updateCamera() {
             camera.rotation.order = 'YXZ';
             camera.rotation.set(pitch, yaw, 0);
         }
 
-        renderer.domElement.addEventListener('click', () => renderer.domElement.requestPointerLock());
+        // === PC : Pointer Lock (souris) ===
+        renderer.domElement.addEventListener('click', () => {
+            renderer.domElement.requestPointerLock();
+        });
 
         document.addEventListener('mousemove', e => {
-            if (document.pointerLockElement) {
-                yaw -= e.movementX * sensitivity;
-                pitch -= e.movementY * sensitivity;
+            if (document.pointerLockElement === renderer.domElement) {
+                yaw -= e.movementX * sensitivityMouse;
+                pitch -= e.movementY * sensitivityMouse;
                 pitch = Math.max(-1.5, Math.min(1.5, pitch));
                 updateCamera();
             }
         });
 
-        // === Rockets + Auto-fire ===
-        const rocketColors = [{hex:0xff0000},{hex:0x0000ff},{hex:0x00ff00},{hex:0xffff00},{hex:0xffffff},{hex:0x000000},{hex:0xffa500}];
+        // === MOBILE : Regard au doigt (sur le canvas) ===
+        let isLooking = false;
+        let lastTouchX = 0, lastTouchY = 0;
+
+        renderer.domElement.addEventListener('touchstart', e => {
+            // On regarde seulement si on touche le canvas (pas un bouton)
+            if (e.touches.length === 1 && !e.target.closest('.control-btn')) {
+                isLooking = true;
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+            }
+        }, { passive: false });
+
+        renderer.domElement.addEventListener('touchmove', e => {
+            if (!isLooking || e.touches.length !== 1) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            const dx = touch.clientX - lastTouchX;
+            const dy = touch.clientY - lastTouchY;
+            yaw -= dx * sensitivityTouch;
+            pitch -= dy * sensitivityTouch;
+            pitch = Math.max(-1.5, Math.min(1.5, pitch));
+            updateCamera();
+            lastTouchX = touch.clientX;
+            lastTouchY = touch.clientY;
+        }, { passive: false });
+
+        renderer.domElement.addEventListener('touchend', () => { isLooking = false; });
+        renderer.domElement.addEventListener('touchcancel', () => { isLooking = false; });
+
+        // ========== ROCKETS ==========
+        const rocketColors = [
+            {hex:0xff0000}, {hex:0x0000ff}, {hex:0x00ff00},
+            {hex:0xffff00}, {hex:0xffffff}, {hex:0x000000}, {hex:0xffa500}
+        ];
         let currentColorIndex = 0;
         let rocketMaterial = new THREE.MeshBasicMaterial({ color: rocketColors[0].hex });
         let traceMaterial = new THREE.MeshBasicMaterial({ color: rocketColors[0].hex });
@@ -360,12 +368,12 @@
             document.getElementById("color-btn").style.background = '#' + col.toString(16).padStart(6,'0');
         }
 
-        const rocketGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 16);
+        const rocketGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 12);
         const rockets = [];
         const rocketSpeed = 0.25;
         const raycaster = new THREE.Raycaster();
         let lastShotTime = 0;
-        const fireRate = 20;
+        const fireRate = 80;
         let isFiring = false;
 
         function getDirection() {
@@ -386,27 +394,23 @@
         }
 
         function createTrace(point, normal) {
-            const trace = new THREE.Mesh(new THREE.CircleGeometry(0.12, 16), traceMaterial);
+            const trace = new THREE.Mesh(new THREE.CircleGeometry(0.12, 12), traceMaterial);
             trace.position.copy(point).add(normal.clone().multiplyScalar(0.02));
             trace.lookAt(point.clone().add(normal));
             scene.add(trace);
         }
 
-        // Clic gauche = Tir (maintenir = continu)
+        // PC : clic gauche = tir, clic droit = couleur
         renderer.domElement.addEventListener('mousedown', e => {
-            if (e.button === 0) {
-                isFiring = true;
-            }
-            else if (e.button === 2) {
-                updateColors();
-            }
+            if (e.button === 0) isFiring = true;
+            else if (e.button === 2) updateColors();
         });
         document.addEventListener('mouseup', e => {
             if (e.button === 0) isFiring = false;
         });
+        document.addEventListener('contextmenu', e => e.preventDefault());
 
-
-        // Mouvement + Auto-fire dans la boucle
+        // ========== MOUVEMENT ==========
         let moveForward = 0, moveBackward = 0, moveLeft = 0, moveRight = 0;
         let isJumping = false, velocityY = 0;
         const moveSpeed = 0.08;
@@ -414,51 +418,71 @@
         const gravity = 0.012;
 
         const keys = {};
-        document.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
-        document.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
-
-        // Boutons tactiles
-        document.getElementById("mf").addEventListener("touchstart", () => moveForward = 1);
-        document.getElementById("mb").addEventListener("touchstart", () => moveBackward = 1);
-        document.getElementById("ml").addEventListener("touchstart", () => moveLeft = 1);
-        document.getElementById("mr").addEventListener("touchstart", () => moveRight = 1);
         document.addEventListener('keydown', e => {
             keys[e.key.toLowerCase()] = true;
-
-            // Saut avec Espace
             if (e.key === " " && !isJumping) {
-                e.preventDefault();        // ← important pour éviter le scroll de page
+                e.preventDefault();
                 isJumping = true;
                 velocityY = jumpSpeed;
             }
         });
-
         document.addEventListener('keyup', e => {
             keys[e.key.toLowerCase()] = false;
         });
-        document.getElementById("rocket").addEventListener("touchstart", launchRocket);
+
+        // Helper boutons (tactile + souris)
+        function bindButton(id, onStart, onEnd) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const start = (e) => { e.preventDefault(); e.stopPropagation(); onStart(); };
+            const end = (e) => { e.preventDefault(); e.stopPropagation(); onEnd(); };
+            el.addEventListener('touchstart', start, { passive: false });
+            el.addEventListener('touchend', end, { passive: false });
+            el.addEventListener('touchcancel', end, { passive: false });
+            el.addEventListener('mousedown', start);
+            el.addEventListener('mouseup', end);
+            el.addEventListener('mouseleave', end);
+        }
+
+        bindButton("mf", () => moveForward = 1, () => moveForward = 0);
+        bindButton("mb", () => moveBackward = 1, () => moveBackward = 0);
+        bindButton("ml", () => moveLeft = 1, () => moveLeft = 0);
+        bindButton("mr", () => moveRight = 1, () => moveRight = 0);
+
+        bindButton("jump", () => {
+            if (!isJumping) {
+                isJumping = true;
+                velocityY = jumpSpeed;
+            }
+        }, () => {});
+
+        bindButton("rocket", () => { isFiring = true; }, () => { isFiring = false; });
+        bindButton("color-btn", () => updateColors(), () => {});
 
         function constrainCamera() {
             camera.position.x = Math.max(-11, Math.min(18, camera.position.x));
             camera.position.z = Math.max(-5.7, Math.min(5.7, camera.position.z));
-            if (camera.position.y < 2) { camera.position.y = 2; velocityY = 0; isJumping = false; }
+            if (camera.position.y < 2) {
+                camera.position.y = 2;
+                velocityY = 0;
+                isJumping = false;
+            }
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            // Auto-fire
             if (isFiring) launchRocket();
 
-            // Rockets update
-            for (let i = rockets.length-1; i >= 0; i--) {
+            // Update rockets
+            for (let i = rockets.length - 1; i >= 0; i--) {
                 const r = rockets[i];
                 r.mesh.position.addScaledVector(r.direction, rocketSpeed);
                 r.distance += rocketSpeed;
 
                 raycaster.set(r.mesh.position, r.direction);
                 const hits = raycaster.intersectObjects([...walls, ...inscriptionsMeshes]);
-                if (hits.length > 0 && hits[0].distance < rocketSpeed + 0.2) {
+                if (hits.length > 0 && hits[0].distance < rocketSpeed + 0.25) {
                     createTrace(hits[0].point, hits[0].face.normal.clone().transformDirection(hits[0].object.matrixWorld));
                     scene.remove(r.mesh);
                     rockets.splice(i, 1);
@@ -469,12 +493,12 @@
             }
 
             // Mouvement
-            const forward = new THREE.Vector3(0,0,-1).applyAxisAngle(new THREE.Vector3(0,1,0), yaw);
-            const right = new THREE.Vector3(1,0,0).applyAxisAngle(new THREE.Vector3(0,1,0), yaw);
+            const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+            const right = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
 
-            if (moveForward || keys['z'] || keys['arrowup']) camera.position.addScaledVector(forward, moveSpeed);
+            if (moveForward || keys['z'] || keys['arrowup'] || keys['w']) camera.position.addScaledVector(forward, moveSpeed);
             if (moveBackward || keys['s'] || keys['arrowdown']) camera.position.addScaledVector(forward, -moveSpeed);
-            if (moveLeft || keys['q'] || keys['arrowleft']) camera.position.addScaledVector(right, -moveSpeed);
+            if (moveLeft || keys['q'] || keys['arrowleft'] || keys['a']) camera.position.addScaledVector(right, -moveSpeed);
             if (moveRight || keys['d'] || keys['arrowright']) camera.position.addScaledVector(right, moveSpeed);
 
             if (isJumping) {
@@ -498,6 +522,13 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        // Empêche le scroll / zoom sur mobile
+        document.addEventListener('touchmove', e => {
+            if (e.target === renderer.domElement || e.target.closest('.control-btn')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
