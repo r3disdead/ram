@@ -221,6 +221,9 @@
                     "c4b0e1fb1c810d0397d1c15ac2d6386474fceff908bd1e80daa82fff6ceaadfai0",
                     "e231fedf1a5fa48650e6bfb859397d1f1a37410ff86b01bb552c5a323a0c503bi0",
                     "66b11ca594e7dfceb0385c1b02f434299815d4f1d3977e64b6e565ebdc62ff09i0"
+                ],
+                up_face_right: [
+                    "dcc3e6d4c15db25c48e21fdd0f34af08e99dc1aa1a140d1e33270f52d5cb7451i0"
                 ]
             }
         };
@@ -294,6 +297,7 @@
 
         inscriptions.r4.up_face.forEach((url, i) => addFrame(url, -5.9, 13.5, -4+i*4, Math.PI / 2));
         inscriptions.r4.up_face_left.forEach((url, i) => addFrame(url, -4 + i * 4, 13.5, -5.9, 0));
+        inscriptions.r4.up_face_right.forEach((url, i) => addFrame(url, -4 + i * 4, 13.5, 5.9, Math.PI));
 
         // ========== CAMÉRA & CONTROLES ==========
         camera.position.set(0, 2, 0);
